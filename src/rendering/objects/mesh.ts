@@ -1,4 +1,4 @@
-import { BoundingBox } from "../../shared";
+import { type BoundingBox } from "../../shared";
 import { ConcreteObject } from "./shared";
 import { GraphicsLibrary } from "../..";
 import { Allocator } from "../../allocation";

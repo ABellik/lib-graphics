@@ -1,5 +1,5 @@
 import type { Allocator, GraphicsLibrary, Intersection } from "../../..";
-import { BoundingBox, Ray } from "../../../shared";
+import { type BoundingBox, Ray } from "../../../shared";
 import { IParametricObject } from "./shared";
 import * as r from "restructure";
 

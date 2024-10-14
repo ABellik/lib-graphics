@@ -1,4 +1,4 @@
-import { Camera3D, OrbitCamera, SmoothCamera } from "../cameras/index";
+import { type Camera3D, OrbitCamera, SmoothCamera } from "../cameras/index";
 import { Scene } from "../scene";
 import { GraphicsLibrary } from "..";
 

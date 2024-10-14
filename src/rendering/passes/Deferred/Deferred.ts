@@ -355,7 +355,7 @@ export class DeferredPass extends Pass {
         this._pipelines = Pipelines.getInstance(graphicsLibrary);
     }
 
-    private createTextures() {
+    private createTextures(): void {
         this._colorTexture?.destroy();
         this._colorTexture = this._graphicsLibrary.device.createTexture({
             format: navigator.gpu.getPreferredCanvasFormat(),

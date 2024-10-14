@@ -1,6 +1,6 @@
 import { cameraStruct } from "../shared";
 
-export const meshShaderTemplate = (
+export function meshShaderTemplate(
     globals: string,
     
     vertexShader: string,
@@ -11,7 +11,7 @@ export const meshShaderTemplate = (
         normal: string,
         ao: string,
     }
-) => {
+): string {
     return /* wgsl */`
 ${cameraStruct}
 
@@ -40,4 +40,4 @@ fn main_fragment(vertexOutput: VertexOutput) -> FragmentOutput {
         vec2<f32>(1.0, 1.0)
     );
 }
-`};
+`}

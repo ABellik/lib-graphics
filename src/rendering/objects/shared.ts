@@ -65,7 +65,7 @@ export abstract class ConcreteObject extends IObject {
         this._dirtyCPU = false;
     }
 
-    public record(encoder: GPURenderPassEncoder, bindGroupLayoutsOffset: number, frameID: number) {
+    public record(encoder: GPURenderPassEncoder, bindGroupLayoutsOffset: number, frameID: number): void {
         if (this.hidden) {
             return;
         }

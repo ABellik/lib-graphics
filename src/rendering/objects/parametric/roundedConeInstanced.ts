@@ -1,6 +1,6 @@
 import { Allocator, GraphicsLibrary } from "../../..";
 import type { BoundingBox, Ray } from "../../../shared";
-import { IParametricObject, Intersection } from "./shared";
+import { IParametricObject, type Intersection } from "./shared";
 import { vec3 } from "gl-matrix";
 import * as r from "restructure";
 

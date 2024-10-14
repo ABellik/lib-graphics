@@ -213,7 +213,7 @@ export class Sphere extends IParametricObject {
         u8View.set(SphereStruct.toBuffer(this.properties), 0);
     }
 
-    public setTransparent(){
+    public setTransparent(): void{
         this._transparent = true;
     }
 }

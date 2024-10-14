@@ -1,4 +1,4 @@
-import { Camera3D, GraphicsLibrary } from "..";
+import { type Camera3D, GraphicsLibrary } from "..";
 import { DeferredPass } from "../rendering";
 import { Scene } from "../scene";
 import { mergeShader } from "./mergeShader";

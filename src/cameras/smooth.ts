@@ -1,4 +1,4 @@
-import { Camera, CameraConfigurationType, SmoothCameraConfiguration } from "./shared";
+import { Camera, CameraConfigurationType, type SmoothCameraConfiguration } from "./shared";
 import { mat4, quat, vec3, vec4 } from "gl-matrix";
 
 // const TAU = Math.PI * 2.0;

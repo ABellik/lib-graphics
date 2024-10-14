@@ -1,6 +1,6 @@
 import { VolumeTextureSize } from "./volume";
 
-export const volumeFromPathlines = () => {
+export function volumeFromPathlines(): string {
     return /* wgsl */`
 
 fn opSmoothUnion(d1: f32, d2: f32, k: f32) -> f32 {
@@ -88,6 +88,6 @@ struct GlobalsStruct {
 
     arrayGrid[objectId][GlobalInvocationID.x][GlobalInvocationID.y][GlobalInvocationID.z % ${VolumeTextureSize}] = vec2<f32>(f32(lastTimestep) / f32(timestepCount), f32(countTimesteps) / f32(timestepCount));
 }
-`};
+`}
 
 

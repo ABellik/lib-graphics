@@ -1,6 +1,6 @@
 import { cameraStruct, fragmentToRayFunction, rayTracingStructs, sphereToBoundingRectangleFunction } from "../shared";
 
-export const volumeShaderTemplate = (
+export function volumeShaderTemplate(
     name: string,
     typeName: string,
     globals: string,
@@ -12,7 +12,7 @@ export const volumeShaderTemplate = (
         normal: string,
         ao: string,
     }
-) => {
+) : string {
     return /* wgsl */`
 ${cameraStruct}
 
@@ -79,4 +79,4 @@ fn main_fragment(vertexOuput: VertexOutput) -> FragmentOutput {
         vec4<f32>(color),
     );
 }
-`};
+`}

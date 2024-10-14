@@ -1,5 +1,5 @@
 import { mat4, vec3, vec4 } from "gl-matrix";
-import { CameraConfigurationType, OrthoCameraConfiguration } from "./shared";
+import { CameraConfigurationType, type OrthoCameraConfiguration } from "./shared";
 
 export class Ortho2DCamera {
     private _width: number;
@@ -150,7 +150,7 @@ export class Ortho2DCamera {
     public get viewProjectionInverseMatrix(): mat4 {
         return this._viewProjectionInverseMatrix;
     }
-    get ignoreEvents() {
+    get ignoreEvents(): boolean {
         return this._eventStartedElsewhere || this._ignoreEvents;
     }
 
@@ -170,7 +170,7 @@ export class Ortho2DCamera {
     /**
      * updateCPU
      */
-    protected updateCPU() {
+    protected updateCPU(): void {
         const zoom = this._zoom;
 
         // mat4.ortho(this._projectionMatrix, -this._scale, this._scale, -this._scale, this._scale, -1.0, 1.0);
@@ -224,7 +224,7 @@ export class Ortho2DCamera {
     /**
      * updateGPU
      */
-    public updateGPU(queue: GPUQueue) {
+    public updateGPU(queue: GPUQueue): void {
         queue.writeBuffer(
             this.bufferGPU,
             0,
@@ -237,7 +237,7 @@ export class Ortho2DCamera {
     ///
     /// Events
     ///
-    public onMouseDown(event: MouseEvent) {
+    public onMouseDown(event: MouseEvent): void {
         if (this.ignoreEvents) {
             return;
         }
@@ -249,7 +249,7 @@ export class Ortho2DCamera {
         this.updateCPU();
     }
 
-    public onMouseMove(event: MouseEvent) {
+    public onMouseMove(event: MouseEvent): void {
         if (this.ignoreEvents) {
             return;
         }
@@ -270,7 +270,7 @@ export class Ortho2DCamera {
         this.updateCPU();
     }
 
-    public onMouseUp(event: MouseEvent) {
+    public onMouseUp(event: MouseEvent): void {
         if (event.buttons === 0) {
             this._eventStartedElsewhere = false;
         }
@@ -280,7 +280,7 @@ export class Ortho2DCamera {
         this.updateCPU();
     }
 
-    public onWheelEvent(event: WheelEvent) {
+    public onWheelEvent(event: WheelEvent): void {
         if (this.ignoreEvents) {
             return;
         }
@@ -290,14 +290,14 @@ export class Ortho2DCamera {
         this.updateCPU();
     }
 
-    public onMouseEnter(event: MouseEvent) {
+    public onMouseEnter(event: MouseEvent): void {
         if (event.buttons !== 0) {
             this._eventStartedElsewhere = true;
         }
 
     }
 
-    public onMouseLeave(event: MouseEvent) {
+    public onMouseLeave(event: MouseEvent): void {
         this.mousePressed = false;
     }
 

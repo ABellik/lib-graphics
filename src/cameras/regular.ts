@@ -1,4 +1,4 @@
-import { Camera, OrbitCameraConfiguration, toRadian} from "./shared";
+import { Camera, type OrbitCameraConfiguration, toRadian} from "./shared";
 import { mat4,  quat,  vec3 } from "gl-matrix";
 import { WordTransformation } from "./wordTransform";
 
@@ -51,14 +51,14 @@ export class RegularCamera extends Camera {
     ///
     /// Events
     ///
-    public onMouseDown(event: MouseEvent) {
+    public onMouseDown(event: MouseEvent): void {
         super.onMouseDown(event);
         this.lastX = event.offsetX;
         this.lastY = event.offsetY;
         this.mousePressed = true;
     }
 
-    public onMouseMove(event: MouseEvent) {
+    public onMouseMove(event: MouseEvent): void {
         super.onMouseMove(event);
         const ROTATION_SPEED = 1 / 5;
 
@@ -82,30 +82,30 @@ export class RegularCamera extends Camera {
         }
     }
 
-    public onMouseUp(event: MouseEvent) {
+    public onMouseUp(event: MouseEvent): void {
         super.onMouseUp(event);
 
         this.mousePressed = false;
     }
 
-    public onMouseEnter(event: MouseEvent) {
+    public onMouseEnter(event: MouseEvent): void {
         super.onMouseEnter(event);
     }
 
-    public onMouseLeave(event: MouseEvent) {
+    public onMouseLeave(event: MouseEvent): void {
         super.onMouseLeave(event);
 
         this.mousePressed = false;
     }
 
-    public onWheelEvent(event: WheelEvent) {
+    public onWheelEvent(event: WheelEvent): void {
         super.onWheelEvent(event);
 
         this.wordTransform.scale += event.deltaY / 1000.0;
         this.updateCPU();
     }
 
-    zoom(zoomingIn: boolean, zoomingOut: boolean) {
+    zoom(zoomingIn: boolean, zoomingOut: boolean): void {
         if (zoomingIn === zoomingOut) {
             return;
         }
@@ -121,25 +121,25 @@ export class RegularCamera extends Camera {
         this.updateCPU();
     }
 
-    private rotateCameraDegX(angle: number){
+    private rotateCameraDegX(angle: number): void{
         const rot = quat.fromValues(0, Math.sin(0.5 * toRadian(angle)),0, Math.cos(0.5 * toRadian(angle)));
         quat.multiply(this._cameraOrientation, rot, this._cameraOrientation);
         this.updateCPU();
     }
 
-    private rotateCameraDegY(angle: number){
+    private rotateCameraDegY(angle: number): void{
         const rot = quat.fromValues(Math.sin(0.5 * toRadian(angle)), 0, 0, Math.cos(0.5 * toRadian(angle)));
         quat.multiply(this._cameraOrientation, rot, this._cameraOrientation);
         this.updateCPU();
     }
 
-    move(move: vec3){
+    move(move: vec3): void{
         vec3.add(this._cameraPosition, this._cameraPosition, 
             vec3.transformQuat(vec3.create(), move, quat.invert(quat.create(), this._cameraOrientation)));
         this.updateCPU();
     }
 
-    rotateCamera(angles: vec3){
+    rotateCamera(angles: vec3): void{
         /*if(angles[0] != 0){
             quat.multiply(this._cameraOrientation, this.cameraOrientation, angles[0]);
         }

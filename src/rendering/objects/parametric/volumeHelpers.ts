@@ -3,7 +3,7 @@ export function alignTo(val: number, align: number): number
     return Math.floor((val + align - 1) / align) * align;
 }
 
-export function padVolume(buf: Uint8Array, volumeDims: [number, number, number])
+export function padVolume(buf: Uint8Array, volumeDims: [number, number, number]): Uint8Array
 {
     const paddedVolumeDims = [alignTo(volumeDims[0], 256), volumeDims[1], volumeDims[2]];
     const padded =
@@ -17,7 +17,7 @@ export function padVolume(buf: Uint8Array, volumeDims: [number, number, number])
     return padded;
 }
 
-export function getVolumeDimensions(file: string)
+export function getVolumeDimensions(file: string): number[]
 {
     const fileRegex = /.*\/(\w+)_(\d+)x(\d+)x(\d+)_(\w+)\.*/;
     const m = file.match(fileRegex);

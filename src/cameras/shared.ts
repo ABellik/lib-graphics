@@ -1,10 +1,10 @@
 import { mat4, vec3, vec4 } from "gl-matrix";
 
-export function toRadian(n: number) {
+export function toRadian(n: number): number {
     return n * (Math.PI / 180);
 }
 
-export function perspectiveZO(out: mat4, fovy: number, aspect: number, near: number) {
+export function perspectiveZO(out: mat4, fovy: number, aspect: number, near: number): mat4 {
     const f = 1.0 / Math.tan(fovy / 2);
     out[0] = f / aspect;
     out[1] = 0;
@@ -156,7 +156,7 @@ export class Camera {
     }
 
 
-    get ignoreEvents() {
+    get ignoreEvents(): boolean {
         return this._eventStartedElsewhere || this._ignoreEvents;
     }
 
@@ -245,34 +245,34 @@ export class Camera {
         this._dirty = false;
     }
 
-    public onMouseDown(event: MouseEvent) {
+    public onMouseDown(event: MouseEvent): void {
     }
 
-    public onMouseMove(event: MouseEvent) {
+    public onMouseMove(event: MouseEvent): void {
     }
 
-    public onMouseUp(event: MouseEvent) {
+    public onMouseUp(event: MouseEvent): void {
         if (event.buttons === 0) {
             this._eventStartedElsewhere = false;
         }
     }
 
-    public onMouseEnter(event: MouseEvent) {
+    public onMouseEnter(event: MouseEvent): void {
         if (event.buttons !== 0) {
             this._eventStartedElsewhere = true;
         }
 
     }
 
-    public onMouseLeave(event: MouseEvent) {
+    public onMouseLeave(event: MouseEvent): void {
         this._eventStartedElsewhere = false;
     }
 
-    public onWheelEvent(event: WheelEvent) {
+    public onWheelEvent(event: WheelEvent): void {
         this._version++;
     }
 
-    public onKeyDown(event: KeyboardEvent) {
+    public onKeyDown(event: KeyboardEvent): void {
 
     }
 

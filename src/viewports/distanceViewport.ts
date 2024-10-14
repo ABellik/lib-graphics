@@ -1,4 +1,4 @@
-import { CameraConfigurationType, Ortho2DCamera, OrthoCameraConfiguration } from "../cameras/index";
+import { CameraConfigurationType, Ortho2DCamera, type OrthoCameraConfiguration } from "../cameras/index";
 import { vec2, vec3, vec4 } from "gl-matrix";
 import { GraphicsLibrary } from "..";
 import { distanceShader } from "./distanceShader";
@@ -589,7 +589,7 @@ export class DistanceViewport {
         };
     }
 
-    private maximumDistances(pos: Array<vec4>, globs: Globals) {
+    private maximumDistances(pos: Array<vec4>, globs: Globals): { globals: Globals, positions: Array<vec4> } {
         const globals: Globals = globs;
         const positions: Array<vec4> = pos;
 

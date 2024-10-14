@@ -2,11 +2,13 @@ import { vec2, vec3, vec4 } from "gl-matrix"
 import { Camera } from "./cameras/shared"
 import { Ray } from "./shared"
 
-const isValidHex = (hex: string) => /^#([A-Fa-f0-9]{3,4}){1,2}$/.test(hex)
+const isValidHex = (hex: string):boolean => /^#([A-Fa-f0-9]{3,4}){1,2}$/.test(hex);
 
-const getChunksFromString = (st: string, chunkSize: number) => st.match(new RegExp(`.{${chunkSize}}`, "g"))
+function getChunksFromString(st: string, chunkSize: number):RegExpMatchArray | null {
+    return st.match(new RegExp(`.{${chunkSize}}`, "g"));
+}
 
-const convertHexUnitTo256 = (hexStr: string) => parseInt(hexStr.repeat(2 / hexStr.length), 16)
+const convertHexUnitTo256 = (hexStr: string): number => parseInt(hexStr.repeat(2 / hexStr.length), 16)
 
 export function hexToRGBA(hex: string, alpha: number | null = null): GPUColorDict {
     if (!isValidHex(hex)) { 

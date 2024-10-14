@@ -1,6 +1,6 @@
 import { cameraStruct, fragmentToRayFunction, rayTracingStructs, sphereToBoundingRectangleFunction } from "../shared";
 
-export const transparentParametricShaderTemplate = (
+export function transparentParametricShaderTemplate(
     name: string,
     typeName: string,
     globals: string,
@@ -11,7 +11,7 @@ export const transparentParametricShaderTemplate = (
         color: string,
     },
     intersectionCalculation: string
-) => {
+) : string {
     return /* wgsl */`
 ${cameraStruct}
 
@@ -81,4 +81,4 @@ fn main_fragment(vertexOuput: VertexOutput) -> FragmentOutput {
         color
     );
 }
-`};
+`}

@@ -1,4 +1,4 @@
-import { Camera, OrbitCameraConfiguration} from "./shared";
+import { Camera, type OrbitCameraConfiguration} from "./shared";
 import { mat4,  vec3 } from "gl-matrix";
 import { WordTransformation } from "./wordTransform";
 
@@ -42,7 +42,7 @@ export class OrbitCamera extends Camera {
     ///
     /// Events
     ///
-    public onMouseDown(event: MouseEvent) {
+    public onMouseDown(event: MouseEvent): void {
         super.onMouseDown(event);
         this.lastX = event.offsetX;
         this.lastY = event.offsetY;
@@ -51,7 +51,7 @@ export class OrbitCamera extends Camera {
         this.updateCPU();
     }
 
-    public onMouseMove(event: MouseEvent) {
+    public onMouseMove(event: MouseEvent): void {
         super.onMouseMove(event);
 
         if (this.mousePressed) {
@@ -70,7 +70,7 @@ export class OrbitCamera extends Camera {
         this.updateCPU();
     }
 
-    public onMouseUp(event: MouseEvent) {
+    public onMouseUp(event: MouseEvent): void {
         super.onMouseUp(event);
 
         this.mousePressed = false;
@@ -78,19 +78,18 @@ export class OrbitCamera extends Camera {
         this.updateCPU();
     }
 
-    public onMouseEnter(event: MouseEvent) {
+    public onMouseEnter(event: MouseEvent): void {
         super.onMouseEnter(event);
     }
 
-    public onMouseLeave(event: MouseEvent) {
+    public onMouseLeave(event: MouseEvent): void {
         super.onMouseLeave(event);
 
         this.mousePressed = false;
     }
 
-    public onWheelEvent(event: WheelEvent) {
+    public onWheelEvent(event: WheelEvent): void {
         super.onWheelEvent(event);
-        console.log(event.deltaY);
         this.wordTransform.scale *= Math.pow(2, -event.deltaY / 1000.0);
         this._dirty = true;
 

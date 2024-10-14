@@ -1,4 +1,4 @@
-import { GraphicsLibrary, PassRenderSettings } from "../../..";
+import { GraphicsLibrary, type PassRenderSettings } from "../../..";
 import { Pass } from "../shared";
 import { BlueNoise } from "./noise";
 import { Pipelines } from "./pipelines";
@@ -71,7 +71,7 @@ export class ScreenSpaceAmbientOcclusionPass extends Pass {
         BlueNoise.getInstance(graphicsLibrary).then((noise) => this._noise = noise);
     }
 
-    private createTextures() {
+    private createTextures(): void {
         this._ssaoTextures.forEach(t => t.destroy());
 
         for (let i = 0; i < 2; i++) {
@@ -92,7 +92,7 @@ export class ScreenSpaceAmbientOcclusionPass extends Pass {
         this._dirty = true;
     }
 
-    public beforeRender() {
+    public beforeRender(): void {
         const globalsBGL = this._pipelines.bindGroupLayouts.get("Globals");
         const inputBGL = this._pipelines.bindGroupLayouts.get("Input");
 
@@ -227,6 +227,6 @@ export class ScreenSpaceAmbientOcclusionPass extends Pass {
         return this._accumulatedSamplesCount;
     }
 
-    public setDirty() { this._dirty = true; }
+    public setDirty(): void { this._dirty = true; }
     public dirty(): boolean { return this._dirty; }
 }

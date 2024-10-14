@@ -13,7 +13,7 @@ export abstract class IParametricObject extends ConcreteObject {
     public static variableName = "iParametric";
     public static typeName = "IParametric";
 
-    public getTypeName() { return IParametricObject.typeName; }
+    public getTypeName(): string { return IParametricObject.typeName; }
 
     static bindGroupLayouts: GPUBindGroupLayout[] = [];
 

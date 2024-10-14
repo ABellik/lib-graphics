@@ -538,7 +538,7 @@ export class SignedDistanceGrid extends IParametricObject {
     //     this.onAllocationMoved();
     // }
 
-    public fromPoints(device: GPUDevice, points: Array<Array<vec3>>, radius: Array<number> = [0.05]) {
+    public fromPoints(device: GPUDevice, points: Array<Array<vec3>>, radius: Array<number> = [0.05]): void {
         const pipeline = this._pipelines.computePipelines.get("gridFromPoints");
         const bgl = this._pipelines.bindGroupLayouts.get("gridFromPoints");
 
@@ -635,7 +635,7 @@ export class SignedDistanceGrid extends IParametricObject {
         //this.createCPUGrid(points[0], radius[0]);
     }
 
-    public fromArbitraryPoints(device: GPUDevice, points: Array<vec3>, delimiters: Array<number>, radius: number = 0.05) {
+    public fromArbitraryPoints(device: GPUDevice, points: Array<vec3>, delimiters: Array<number>, radius: number = 0.05): void {
         const pipeline = this._pipelines.computePipelines.get("gridFromArbitraryPoints");
         const bgl = this._pipelines.bindGroupLayouts.get("gridFromPoints");
 
@@ -707,7 +707,7 @@ export class SignedDistanceGrid extends IParametricObject {
         this._dirtyGPU = true;
     }
 
-    public translate(t: vec3, index: number = 0) {
+    public translate(t: vec3, index: number = 0): void {
         this.properties[index].translate = [t[0], t[1], t[2], 1.0];
         this.properties[index].modelMatrix = mat4.create();
         mat4.scale(this.properties[index].modelMatrix, this.properties[index].modelMatrix, vec3.fromValues(this.properties[index].scale[0], this.properties[index].scale[1], this.properties[index].scale[2]));
@@ -719,7 +719,7 @@ export class SignedDistanceGrid extends IParametricObject {
         this._dirtyGPU = true;
     }
 
-    public scale(s: number, index: number = 0) {
+    public scale(s: number, index: number = 0): void {
         this.properties[index].scale = [s, s, s, 1.0];
         this.properties[index].modelMatrix = mat4.create();
         mat4.scale(this.properties[index].modelMatrix, this.properties[index].modelMatrix, vec3.fromValues(s, s, s));  

@@ -1,6 +1,6 @@
 import { GridTextureSize } from "./signedDistanceGrid";
 
-export const signedDistanceGridFromPoints = () => {
+export function signedDistanceGridFromPoints(): string{
     return /* wgsl */`
 
 fn opSmoothUnion(d1: f32, d2: f32, k: f32) -> f32 {
@@ -60,7 +60,7 @@ struct GlobalsStruct {
 }
 `};
 
-export const signedDistanceGridFromArbitraryPoints = () => {
+export function signedDistanceGridFromArbitraryPoints() : string {
   return /* wgsl */`
 
 fn opSmoothUnion(d1: f32, d2: f32, k: f32) -> f32 {
@@ -127,4 +127,4 @@ fn sdSphere(p: vec3<f32>, c: vec3<f32>, s: f32 ) -> f32
 
   textureStore(grid, GlobalInvocationID, vec4<f32>(sdf));   
 }
-`};
+`}

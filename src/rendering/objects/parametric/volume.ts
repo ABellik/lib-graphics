@@ -514,7 +514,7 @@ export class Volume extends IParametricObject {
         */
     }
 
-    public fromPointArrays(device: GPUDevice, points: vec3[][][], radius: number[]) {
+    public fromPointArrays(device: GPUDevice, points: vec3[][][], radius: number[]): void {
         const pipeline = this._pipelines.computePipelines.get("volumeFromPathlines");
         const bgl = this._pipelines.bindGroupLayouts.get("volumeFromPathlines");
 
@@ -602,11 +602,11 @@ export class Volume extends IParametricObject {
         this.onAllocationMoved();
     }
 
-    public fromPoints(device: GPUDevice, points: vec3[][], radius: number = 0.05) {
+    public fromPoints(device: GPUDevice, points: vec3[][], radius: number = 0.05): void {
         this.fromPointArrays(device, [points], [radius]);
     }
 
-    public async setColorMapFromBitmap(bitmap: ImageBitmap) {
+    public async setColorMapFromBitmap(bitmap: ImageBitmap): Promise<void> {
         const texture = this._graphicsLibrary.device.createTexture({
             size: [bitmap.width, bitmap.height, 1],
             format: "rgba8unorm",
@@ -624,7 +624,7 @@ export class Volume extends IParametricObject {
         this.onAllocationMoved();
     }
 
-    public setColor(color: vec4, index: number) {
+    public setColor(color: vec4, index: number): void {
         this.properties[index].color = [color[0], color[1], color[2], color[3]];
         this._dirtyCPU = true;
         this._dirtyGPU = true;
@@ -646,7 +646,7 @@ export class Volume extends IParametricObject {
         this.translateIndex(t, 0);
     }
 
-    public translateIndex(t: vec3, index: number) {
+    public translateIndex(t: vec3, index: number): void {
         this.properties[index].translate = [t[0], t[1], t[2], 1.0];
         this.properties[index].modelMatrix = mat4.create();
 
@@ -667,7 +667,7 @@ export class Volume extends IParametricObject {
         this.scaleIndex(s, 0);
     }
 
-    public scaleIndex(s: number, index: number) {
+    public scaleIndex(s: number, index: number): void {
         this.properties[index].scale = [s, s, s, 1.0];
         this.properties[index].modelMatrix = mat4.create();
         mat4.scale(this.properties[index].modelMatrix, this.properties[index].modelMatrix, vec3.fromValues(s, s, s));
@@ -682,7 +682,7 @@ export class Volume extends IParametricObject {
         this._dirtyGPU = true;
     }
 
-    public static resize(graphicsLibrary: GraphicsLibrary, width: number, height: number) {
+    public static resize(graphicsLibrary: GraphicsLibrary, width: number, height: number): void {
         Volume.accumulationTextures = [
             graphicsLibrary.device.createTexture({
                 size: [width, height, 1],

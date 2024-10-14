@@ -28,24 +28,24 @@ export class WordTransformation extends EventTarget {
         this.changed();
     }
     
-    public rotateDegX(angle: number){
+    public rotateDegX(angle: number): void{
         const rot = quat.fromValues(0, Math.sin(0.5 * toRadian(angle)),0, Math.cos(0.5 * toRadian(angle)));
         quat.multiply(this._rotation, rot, this._rotation);
         this.changed();
     }
 
-    public rotateDegY(angle: number){
+    public rotateDegY(angle: number): void{
         const rot = quat.fromValues(Math.sin(0.5 * toRadian(angle)), 0, 0, Math.cos(0.5 * toRadian(angle)));
         quat.multiply(this._rotation, rot, this._rotation);
         this.changed();
     }
 
-    private changed(){
+    private changed(): void{
         this._isDirty = true;
         this.dispatchEvent(new Event("changed"));
     }
 
-    private updateDirty(){
+    private updateDirty(): void{
         if(this._isDirty){
             const rotate = mat4.fromQuat(mat4.create(), this._rotation);
             mat4.scale(this._matrix, rotate, vec3.fromValues(this.scale, this.scale, this.scale));

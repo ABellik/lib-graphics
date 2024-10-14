@@ -3,7 +3,7 @@ import { Allocator, AllocatorStrategy } from "./shared";
 
 const minimumArraySize = 1048576; // 1MB
 
-function nearestPowerOf2(n: number) {
+function nearestPowerOf2(n: number): number {
     if (n <= 1024) {
         return 1024;
     }
