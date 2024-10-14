@@ -115,9 +115,11 @@ export class Viewport3D extends Viewport {
     protected deferredPass: DeferredPass = new DeferredPass(this.graphicsLibrary);
     protected ssaoPass: ScreenSpaceAmbientOcclusionPass = new ScreenSpaceAmbientOcclusionPass(this.graphicsLibrary, 0.3);
 
-    constructor(graphicsLibrary: GraphicsLibrary, scene: Scene | null = null, camera: Camera3D | null = null) {
-        super(graphicsLibrary, scene, camera);
+    public ssaoEnabled: boolean;
 
+    constructor(graphicsLibrary: GraphicsLibrary, scene: Scene | null = null, camera: Camera3D | null = null, ssaoEnabled: boolean = true) {
+        super(graphicsLibrary, scene, camera);
+        this.ssaoEnabled = ssaoEnabled;
         this._pipelines = ViewportPipelines.getInstance(graphicsLibrary);
 
         this.mergeGlobalsBuffer = graphicsLibrary.device.createBuffer({
@@ -187,9 +189,14 @@ export class Viewport3D extends Viewport {
 
         this.deferredPass.render({ encoder: commandEncoder, cameraBindGroup, scene: this._scene, frameID: this._frameID });
 
-        const computePassEncoder = commandEncoder.beginComputePass();
-        this.ssaoPass.render({ encoder: computePassEncoder, cameraBindGroup, frameID: this._frameID });
-        computePassEncoder.end();
+        if (this.ssaoEnabled){
+            const computePassEncoder = commandEncoder.beginComputePass();
+            this.ssaoPass.render({ encoder: computePassEncoder, cameraBindGroup, frameID: this._frameID });
+            computePassEncoder.end();
+        }
+        else{
+            // todo: handle ssao disabling - now disabled ssao works only if it was disabled in the constructor
+        }
 
         let mergeBindGroupInputTextures = null;
         const layout = this._pipelines.bindGroupLayouts.get("MergeInputTextures");
