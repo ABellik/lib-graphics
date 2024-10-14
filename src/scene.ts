@@ -263,8 +263,8 @@ export class Scene {
         vec3.normalize(ray.direction, ray.direction);
         let closestIntersection: Intersection | null = null;
 
-        for(const object of this._objects){
-            if(object instanceof IParametricObject){
+        for(const object of this.objects){
+            if(object instanceof IParametricObject && object.collisionEnabled){
                 const intersection = object.rayIntersection(ray);
                 if(closestIntersection === null){
                     closestIntersection = intersection;

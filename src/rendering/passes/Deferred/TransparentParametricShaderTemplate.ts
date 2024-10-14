@@ -1,4 +1,4 @@
-import { cameraStruct, fragmentToRayFunction, rayTracingStructs, sphereToBoundingRectangleFunction } from "../shared";
+import { cameraStruct, fragmentToRayFunction, phongFunction, rayTracingStructs, sphereToBoundingRectangleFunction } from "../shared";
 
 export function transparentParametricShaderTemplate(
     name: string,
@@ -21,6 +21,7 @@ ${rayTracingStructs}
 
 ${fragmentToRayFunction}
 ${sphereToBoundingRectangleFunction}
+${phongFunction}
 
 ${globals}
 

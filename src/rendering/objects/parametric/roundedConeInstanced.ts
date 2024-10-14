@@ -158,10 +158,11 @@ export class RoundedConeInstanced extends IParametricObject {
                     let startDist = length(${this.variableName}.start - intersection.position);
                     let endDist = length(${this.variableName}.end - intersection.position);
                     
-                    var color = ${this.variableName}.endColor;
+                    var albedo = ${this.variableName}.endColor;
                     if(startDist < endDist){
-                        color = ${this.variableName}.startColor;
+                        albedo = ${this.variableName}.startColor;
                     }
+                    let color = phong(ray, intersection, albedo);
                 `;
             }
             case "normal": {

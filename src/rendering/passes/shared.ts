@@ -150,3 +150,18 @@ export const fragmentToRayFunction: string = /* wgsl */`
       );
     }
 `;
+
+export const phongFunction: string = /* wgsl */`
+    // simplified Phong shading model
+    fn phong(ray: Ray, intersection: Intersection, color: vec4<f32>) -> vec4<f32> {
+        var ambient = 0.05;
+        
+        var norm =  -intersection.normal;
+        var lightDir = ray.direction;
+        var diffuse = max(dot(norm, lightDir), 0.0);
+        
+        var result = (ambient + diffuse) * color.rgb;
+
+        return vec4(result, color.a);
+    }
+`;

@@ -1,4 +1,4 @@
-import { cameraStruct, fragmentToRayFunction, rayTracingStructs, sphereToBoundingRectangleFunction } from "../shared";
+import { cameraStruct, fragmentToRayFunction, phongFunction, rayTracingStructs, sphereToBoundingRectangleFunction } from "../shared";
 
 export function parametricShaderTemplate(
     name: string,
@@ -23,6 +23,7 @@ ${rayTracingStructs}
 
 ${fragmentToRayFunction}
 ${sphereToBoundingRectangleFunction}
+${phongFunction}
 
 ${globals}
 
@@ -92,4 +93,4 @@ fn main_fragment(vertexOuput: VertexOutput) -> FragmentOutput {
         ao
     );
 }
-`};
+`}
