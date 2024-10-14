@@ -211,6 +211,11 @@ export class Scene {
         this._objects = [];
     }
 
+    public getObjectById(objectID: number): IObject{
+        const objectIndex = this._objects.findIndex((object) => object.id === objectID);
+        return this._objects[objectIndex];
+    }
+
     public removeObjectByID(objectID: number): void {
         const objectIndex = this._objects.findIndex((object) => object.id === objectID);
         const object = this._objects[objectIndex];
