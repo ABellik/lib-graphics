@@ -1,0 +1,37 @@
+{
+  "name": "lib-graphics",
+  "version": "1.0.0",
+  "description": "Graphics library of ChromoSkein project",
+  "files": [
+    "dist"
+  ],
+  "type": "module",
+  "module": "dist/lib-graphics.es.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    "./package.json": "./package.json",
+    ".": {
+      "import": "./dist/lib-graphics.es.js"
+    }
+  },
+  "scripts": {
+    "build-watch": "vite build --watch",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "typescript": "^4.6.4",
+    "vite": "^3.1.0",
+    "vite-plugin-dts": "^1",
+    "vite-tsconfig-paths": "^4"
+  },
+  "dependencies": {
+    "@petamoriken/float16": "^3.6",
+    "@webgpu/types": "^0.1.22",
+    "gl-matrix": "^3.4.3",
+    "image-js": "^0.34.1",
+    "papaparse": "^5.3.2",
+    "restructure": "^3.0.0",
+    "simple-statistics": "^7.7.5"
+  }
+}
