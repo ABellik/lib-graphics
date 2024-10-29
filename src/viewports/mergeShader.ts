@@ -50,7 +50,12 @@ fn main_fragment(@builtin(position) Position : vec4<f32>,
     let aoParameters = textureLoad(ambientOcclusionParameters, vec2<i32>(coordinates), 0).xy;
 
     let ao = textureLoad(ambientOcclusion, vec2<i32>(coordinates), 0).x / 64.0;
-    let aoInverse = 1.0 - ao;
+    var aoInverse = 1.0 - ao;
+
+    // Turns off SSAO if parameter ao.x == 0.0
+    if (aoParameters.x == 0.0) {
+        aoInverse = 1.0;
+    }
 
     return vec4<f32>((1.0 - colorVolume.a) * (aoInverse * colorOpaque.rgb) + colorVolume.a * colorVolume.rgb, 1.0); 
 

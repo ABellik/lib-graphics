@@ -172,6 +172,7 @@ export class SignedDistanceGrid extends IParametricObject {
             position: vec3<f32>,
             normal: vec3<f32>,
             index: i32,
+            outline: bool,
         };
 
         @group(1) @binding(0) var<storage, read> ${this.variableName}: array<${this.typeName}>;
@@ -279,6 +280,7 @@ export class SignedDistanceGrid extends IParametricObject {
         fn findClosestIntersection(ray: Ray, index: i32) -> ObjectIntersection {
             var bestDistance: f32 = 10000.0;
             var found = false;
+            var outline = false;
             var bestIntersection: Intersection = Intersection(-1.0, vec3<f32>(0.0), vec3<f32>(0.0));
             var foundIndex: i32 = -1;
             
@@ -296,6 +298,7 @@ export class SignedDistanceGrid extends IParametricObject {
                             bestIntersection = intersection_two;
                             bestDistance = dist;
                             foundIndex = i32(i);
+                            outline = true;
                         }
                     }
                 }
@@ -308,6 +311,7 @@ export class SignedDistanceGrid extends IParametricObject {
                         bestIntersection = intersection;
                         bestDistance = dist;
                         foundIndex = i32(i);
+                        outline = false;
                     }
                 }
             }
@@ -317,14 +321,16 @@ export class SignedDistanceGrid extends IParametricObject {
                     -1.0,
                     vec3<f32>(0.0),
                     vec3<f32>(0.0),
-                    -1
+                    -1,
+                    false
                 );
             } else {
                 return ObjectIntersection(
                     bestIntersection.t,
                     bestIntersection.position,
                     bestIntersection.normal,
-                    foundIndex
+                    foundIndex,
+                    outline
                 );
             }
         }
@@ -372,7 +378,11 @@ export class SignedDistanceGrid extends IParametricObject {
             }
             case "ao": {
                 return /* wgsl */`
-                    let ao = vec2(1.0, 1.0);
+                    // Turn off AO for outlines, otherwise keep 
+                    var ao = vec2(1.0, 1.0);
+                    if (objectIntersection.outline) {
+                        ao = vec2(0.0, 0.0);
+                    }
                 `;
             }
         }
