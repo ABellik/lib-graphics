@@ -1,5 +1,5 @@
 {
-  "name": "lib-graphics",
+  "name": "@chromoskein/lib-graphics",
   "version": "1.0.0",
   "description": "Graphics library of ChromoSkein project",
   "files": [
@@ -10,9 +10,7 @@
   "types": "dist/index.d.ts",
   "exports": {
     "./package.json": "./package.json",
-    ".": {
-      "import": "./dist/lib-graphics.es.js"
-    }
+    ".": "./dist/lib-graphics.es.js"
   },
   "scripts": {
     "build-watch": "vite build --watch",
@@ -33,5 +31,6 @@
     "papaparse": "^5.3.2",
     "restructure": "^3.0.0",
     "simple-statistics": "^7.7.5"
-  }
+  },
+  "repository": "https://github.com/chromoskein/lib-graphics.git"
 }
