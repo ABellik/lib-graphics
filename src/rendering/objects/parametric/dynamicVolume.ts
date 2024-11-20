@@ -102,7 +102,7 @@ export const DynamicVolumeStruct = new r.Struct({
     func: r.uint32le,
 });
 
-export const DynamicVolumeTextureSize: number = 64;
+export const DynamicVolumeTextureSize: number = 120;
 
 export class DynamicVolume extends IParametricObject {
     public static variableName = "dynamicVolume";
@@ -331,6 +331,7 @@ export class DynamicVolume extends IParametricObject {
                         for(var i: u32 = 0; i < arrayLength(&${this.variableName}); i++) {
                             // Sample the grid
                             var grid_value: f32 = 0.0;
+
                             if (${this.variableName}[i].func == 0) { 
                                 grid_value = sampleLastTimestepGrid(tex_coord, i);
                             } else {
@@ -342,7 +343,12 @@ export class DynamicVolume extends IParametricObject {
                             if (${this.variableName}[i].color.w == 0.0) {
                                 grid_color = textureSampleLevel(colormap, linearSampler, vec2<f32>(grid_value, 0.5), 0.0).rgb;
                             }
-                            let grid_alpha: f32 = ${this.variableName}[i].transparency * grid_value;
+                            var grid_alpha: f32 = ${this.variableName}[i].transparency * grid_value;
+                            
+                            // If the function is last timestep, just use transparency
+                            if (${this.variableName}[i].func == 0) { 
+                                grid_alpha = ${this.variableName}[i].transparency * min(grid_value * 4, 1.0);
+                            }
 
                             // Compose using inclusive opacity
                             p_alpha = p_alpha * (1 - grid_alpha);

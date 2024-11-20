@@ -44,7 +44,7 @@ struct GlobalsStruct {
 
     let scale = globals.scale;
     let radius = globals.radius / scale;
-    let smoothing = 0.1;
+    let smoothing = 0.01;
 
     var lastTimestep: u32 = 0;
     var countTimesteps: u32 = 0;
