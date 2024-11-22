@@ -200,6 +200,12 @@ fn main_fragment(
         finalColor = mix(colors[3], colors[4], (newWeight - 0.75) / 0.25);
     }
 
+    if (newWeight < 0.5) {
+        finalColor = mix(vec3<f32>(1.0, 0.0, 0.0), vec3<f32>(1.0), newWeight / 0.5);
+    } else {
+        finalColor = mix(vec3<f32>(1.0), vec3<f32>(0.0, 0.0, 1.0), (newWeight - 0.5) / 0.5);
+    }
+
     return FragmentOutput(
             vec4<f32>(finalColor, 1.0)
         );
