@@ -162,8 +162,8 @@ export function globalsToArrayBuffer(globals: Globals): ArrayBuffer {
 export class DistanceViewport {
     protected graphicsLibrary: GraphicsLibrary;
 
-    protected _canvas: HTMLCanvasElement | null = null;
-    protected _context: GPUCanvasContext | null = null;
+    //protected _canvas: HTMLCanvasElement | null = null;
+    //protected _context: GPUCanvasContext | null = null;
 
     private width = 0;
     private height = 0;
@@ -186,9 +186,9 @@ export class DistanceViewport {
         colorIndices: Uint16Array | Uint8Array | null = null,
     ) {
         this.graphicsLibrary = graphicsLibrary;
-        this._canvas = canvas;
+        //this._canvas = canvas;
 
-        if (this._canvas !== null) {
+/*         if (this._canvas !== null) {
             this._context = this._canvas.getContext("webgpu");
 
             const parent = this._canvas.parentElement;
@@ -208,7 +208,7 @@ export class DistanceViewport {
             if (parent) {
                 observer.observe(parent, { box: "device-pixel-content-box" });
             }
-        }
+        } */
 
         this._camera = new Ortho2DCamera(
             this.graphicsLibrary.device,
@@ -249,15 +249,19 @@ export class DistanceViewport {
         if (width <= 0 || height <= 0) {
           return;
         }
-    
+
         if (this._camera) {
           this._camera.width = this.width;
           this._camera.height = this.height;
         }
+
+/*        console.log("Context:" + this._context);
+        console.log("Canvas:" + this._canvas);
       
         if (!this._context || !this._canvas) {
             return;
         }
+
 
         const devicePixelRatio = window.devicePixelRatio || 1.0;
 
@@ -269,20 +273,13 @@ export class DistanceViewport {
         this._canvas.width = width;
         this._canvas.height = height;
 
-        /*
-        const size = {
-            width: this.width,
-            height: this.height,
-        };
-        */
-
         this._context.configure({
             device: this.graphicsLibrary.device,
             format: "bgra8unorm",
             usage: GPUTextureUsage.RENDER_ATTACHMENT,
             alphaMode: "opaque",
-            // size,
-        });
+            size,
+        }); */
 
         this.recalculateLoD();
     }
@@ -525,7 +522,8 @@ export class DistanceViewport {
             bins /= 2;
         }
 
-        this.globals.currentLoD = lod;
+        // Manually increase LoD
+        this.globals.currentLoD = Math.max(lod - 2, 0);
     }
 
     public setPositions(positions: Array<vec3>): void {
@@ -534,7 +532,7 @@ export class DistanceViewport {
             pos.push(vec4.fromValues(positions[i][0], positions[i][1], positions[i][2], 1.0))
         }
 
-        console.time("distanceMap::setPositions");
+        //console.time("distanceMap::setPositions");
         const device = this.graphicsLibrary.device;
         this.globals = globalsNew();
 
@@ -578,7 +576,7 @@ export class DistanceViewport {
         );
 
         this.recalculateLoD();
-        console.timeEnd("distanceMap::setPositions");
+        //console.timeEnd("distanceMap::setPositions");
 
         this.cameraConfiguration = {
             type: CameraConfigurationType.Ortho,
@@ -661,7 +659,7 @@ export class DistanceViewport {
 
             let maximumDistance = 0.0;
 
-            console.time("distanceMap::setPositions::maxDistance");
+            //console.time("distanceMap::setPositions::maxDistance");
             const subsetStart = globals.offsets[currentLoD];
             const subsetEnd = globals.offsets[currentLoD] + globals.sizes[currentLoD];
             for (let i = subsetStart; i < subsetEnd; i++) {
@@ -676,7 +674,7 @@ export class DistanceViewport {
                     }
                 }
             }
-            console.timeEnd("distanceMap::setPositions::maxDistance");
+            //console.timeEnd("distanceMap::setPositions::maxDistance");
 
             globals.maxDistances[currentLoD] = Math.sqrt(maximumDistance);
         }
@@ -811,6 +809,6 @@ export class DistanceViewport {
     }
 
     public get canvas(): HTMLCanvasElement | null {
-        return this._canvas;
-    }
+        return null;
+    } 
 }
