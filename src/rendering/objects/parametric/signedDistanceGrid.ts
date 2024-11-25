@@ -117,7 +117,7 @@ export const SignedDistanceGridStruct = new r.Struct({
     outline: new r.Array(r.floatle, 4)
 });
 
-export const GridTextureSize: number = 64;
+export const GridTextureSize: number = 128;
 
 export class SignedDistanceGrid extends IParametricObject {
     private _pipelines: Pipelines;

@@ -43,7 +43,7 @@ struct GlobalsStruct {
     let begin = GlobalInvocationID.z / ${GridTextureSize};
     let scale = points[delimiters[begin]].w;
     let radius = radii[begin] / scale;
-    let smoothing = 0.1;
+    let smoothing = 0.01;
 
     var sdf = sdSphere(p, points[delimiters[begin]].xyz, radius) * scale;
     for(var i: u32 = delimiters[begin]; i < delimiters[begin + 1] - 1; i++) {
