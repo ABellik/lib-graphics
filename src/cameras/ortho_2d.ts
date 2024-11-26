@@ -254,14 +254,16 @@ export class Ortho2DCamera {
             return;
         }
 
-        if (this.mousePressed) {
-            // const zoomRatio = this.zoom / this.maxZoom;
+        if (this.mousePressed) { 
+            const zoomRatio = this.zoom * 2;
+            const {width, height} = (event.target! as HTMLCanvasElement).getBoundingClientRect();
 
-            const changeX = this.lastX - event.offsetX;
-            const changeY = this.lastY - event.offsetY;
-
-            this._translateX -= (changeX * 0.35355);
-            this._translateY += (changeY * 0.35355);
+            // Ensure change is always the same regardless of canvas size and relative to the zoom
+            const changeX = (this.lastX - event.offsetX) / width * zoomRatio;
+            const changeY = (this.lastY - event.offsetY) / height * zoomRatio;
+            
+            this._translateX -= changeX;
+            this._translateY += changeY;
 
             this.lastX = event.offsetX;
             this.lastY = event.offsetY;
@@ -285,7 +287,10 @@ export class Ortho2DCamera {
             return;
         }
 
-        this.zoom += (event.deltaY / 100.0) * (this._maxZoom / 50.0);
+        // This is not ideal, but it ensures that the zoom is always constant 
+        this.zoom /= this._maxZoom / 2;
+        this.zoom *= 1 + (event.deltaY > 0 ? 1 : -1) / 8;
+        this.zoom *= this._maxZoom / 2;
 
         this.updateCPU();
     }
