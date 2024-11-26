@@ -1,12 +1,12 @@
 import { Camera, type OrbitCameraConfiguration} from "./shared";
 import { mat4,  vec3 } from "gl-matrix";
-import { WordTransformation } from "./wordTransform";
+import { WorldTransformation } from "./worldTransform";
 
 // const TAU = Math.PI * 2.0;
 // const PI = Math.PI;
 
 export class OrbitCamera extends Camera {
-    wordTransform = new WordTransformation();    
+    worldTransform = new WorldTransformation();    
     private lastX = 0;
     private lastY = 0;
     private mousePressed = false;
@@ -25,12 +25,12 @@ export class OrbitCamera extends Camera {
         this._version++;
         const cameraPos = vec3.fromValues(0, 0, -4);
 
-        const worldMatrix = this.wordTransform.matrix; 
+        const worldMatrix = this.worldTransform.matrix; 
         const cameraMatrix = mat4.lookAt(mat4.create(), cameraPos, vec3.fromValues(0,0,0), vec3.fromValues(0,1,0));
         mat4.multiply(this._viewMatrix, cameraMatrix, worldMatrix);
 
-        const wordMatrixInv = this.wordTransform.matrixInv; 
-        vec3.transformMat4(this._position, cameraPos, wordMatrixInv);
+        const worldMatrixInv = this.worldTransform.matrixInv; 
+        vec3.transformMat4(this._position, cameraPos, worldMatrixInv);
 
         super.updateCPU(0);
     }
@@ -58,8 +58,8 @@ export class OrbitCamera extends Camera {
             const changeX = this.lastX - event.offsetX;
             const changeY = this.lastY - event.offsetY;
 
-            this.wordTransform.rotateDegX(-changeX / 5.0);
-            this.wordTransform.rotateDegY(changeY / 5.0);
+            this.worldTransform.rotateDegX(-changeX / 5.0);
+            this.worldTransform.rotateDegY(changeY / 5.0);
 
             this.lastX = event.offsetX;
             this.lastY = event.offsetY;
@@ -90,7 +90,7 @@ export class OrbitCamera extends Camera {
 
     public onWheelEvent(event: WheelEvent): void {
         super.onWheelEvent(event);
-        this.wordTransform.scale *= Math.pow(2, -event.deltaY / 1000.0);
+        this.worldTransform.scale *= Math.pow(2, -event.deltaY / 1000.0);
         this._dirty = true;
 
         this.updateCPU();

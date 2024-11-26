@@ -1,14 +1,14 @@
 import { mat4, quat, vec3 } from "gl-matrix";
 import { toRadian } from "./shared";
 
-export class WordTransformation extends EventTarget {    
+export class WorldTransformation extends EventTarget {    
     private _rotation = quat.identity(quat.create());
     private _scale = 1.0;
 
     private _isDirty = true;
     private _matrix = mat4.create();
     private _matrixInv = mat4.create();
-    
+
 
     public get rotation(): quat{
         return this._rotation;

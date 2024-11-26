@@ -1,12 +1,12 @@
 import { Camera, type OrbitCameraConfiguration, toRadian} from "./shared";
 import { mat4,  quat,  vec3 } from "gl-matrix";
-import { WordTransformation } from "./wordTransform";
+import { WorldTransformation } from "./worldTransform";
 
 // const TAU = Math.PI * 2.0;
 // const PI = Math.PI;
 
 export class RegularCamera extends Camera {
-    wordTransform = new WordTransformation();    
+    worldTransform = new WorldTransformation();    
     private _cameraPosition = vec3.fromValues(0, 0, 0);
     private _cameraOrientation = quat.identity(quat.create());
     readonly _defaultCameraPos = vec3.fromValues(0,0,4);
@@ -23,14 +23,14 @@ export class RegularCamera extends Camera {
         super(device, width, height, near, fieldOfView);
         this.updateCPU();
 
-        this.wordTransform.addEventListener("changed", this.updateCPU.bind(this));
+        this.worldTransform.addEventListener("changed", this.updateCPU.bind(this));
     }
 
     protected updateCPU(): void {   
         //console.log("orientation:", this._cameraOrientation);
         //console.log("position:", this._cameraPosition);
         
-        const worldMatrix = this.wordTransform.matrix; 
+        const worldMatrix = this.worldTransform.matrix; 
 
         const orientMatrix = mat4.fromQuat(mat4.create(), this._cameraOrientation);
         const cameraMatrix = mat4.translate(mat4.create(), orientMatrix, vec3.negate(vec3.create(), this._cameraPosition));
@@ -38,8 +38,8 @@ export class RegularCamera extends Camera {
         
         mat4.multiply(this._viewMatrix, cameraMatrix, worldMatrix);
 
-        const wordMatrixInv = this.wordTransform.matrixInv; 
-        vec3.transformMat4(this._position, vec3.add(vec3.create(), this._cameraPosition, this._defaultCameraPos), wordMatrixInv);
+        const worldMatrixInv = this.worldTransform.matrixInv; 
+        vec3.transformMat4(this._position, vec3.add(vec3.create(), this._cameraPosition, this._defaultCameraPos), worldMatrixInv);
 
         super.updateCPU(0);
     }
@@ -71,8 +71,8 @@ export class RegularCamera extends Camera {
                 this.rotateCameraDegY(-changeY * ROTATION_SPEED);
             }
             else{
-                this.wordTransform.rotateDegX(-changeX * ROTATION_SPEED);
-                this.wordTransform.rotateDegY(-changeY * ROTATION_SPEED);
+                this.worldTransform.rotateDegX(-changeX * ROTATION_SPEED);
+                this.worldTransform.rotateDegY(-changeY * ROTATION_SPEED);
             }
 
             this.lastX = event.offsetX;
@@ -101,7 +101,7 @@ export class RegularCamera extends Camera {
     public onWheelEvent(event: WheelEvent): void {
         super.onWheelEvent(event);
 
-        this.wordTransform.scale += event.deltaY / 1000.0;
+        this.worldTransform.scale += event.deltaY / 1000.0;
         this.updateCPU();
     }
 
@@ -113,9 +113,9 @@ export class RegularCamera extends Camera {
         const ZOOMING_SPEED = 1.01;
 
         if (zoomingIn) {
-            this.wordTransform.scale *= ZOOMING_SPEED;
+            this.worldTransform.scale *= ZOOMING_SPEED;
         } else {
-            this.wordTransform.scale /= ZOOMING_SPEED;
+            this.worldTransform.scale /= ZOOMING_SPEED;
         }
 
         this.updateCPU();

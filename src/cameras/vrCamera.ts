@@ -1,6 +1,6 @@
 import { Camera, ProjectionType } from "./shared";
 import { mat4, vec3 } from "gl-matrix";
-import { WordTransformation } from "./wordTransform";
+import { WorldTransformation } from "./worldTransform";
 
 const projectionWebGPUFromVR = mat4.fromValues(
     1, 0, 0, 0,
@@ -17,14 +17,14 @@ function projectionMatrixWebGPUFromWebGL(m: mat4): mat4 {
 }
 
 export class VRCamera extends Camera {
-    _wordTransform: WordTransformation;
+    _worldTransform: WorldTransformation;
 
-    constructor(device: GPUDevice, wordTransform: WordTransformation) {
+    constructor(device: GPUDevice, wordTransform: WorldTransformation) {
         super(device, 0, 0);
 
         this._projectionType = ProjectionType.Custom;
         
-        this._wordTransform = wordTransform;
+        this._worldTransform = wordTransform;
         this.updateCPU(0);
     }
 
@@ -37,14 +37,14 @@ export class VRCamera extends Camera {
         const INITIAL_CAMERA_POS_MAT = mat4.translate(mat4.create(), 
             mat4.identity(mat4.create()), vec3.negate(vec3.create(), INITIAL_CAMERA_POS));
 
-        const wordMatrix = this._wordTransform.matrix;
-        const movedWordMatrix = mat4.mul(mat4.create(), INITIAL_CAMERA_POS_MAT, wordMatrix);
+        const worldMatrix = this._worldTransform.matrix;
+        const movedWorldMatrix = mat4.mul(mat4.create(), INITIAL_CAMERA_POS_MAT, worldMatrix);
         
         const cameraPos = vec3.fromValues(position.x, position.y, position.z);
         //vec3.add(cameraPos, cameraPos, INITIAL_CAMERA_POS);
 
-        mat4.mul(this._viewMatrix, cameraMatrix, movedWordMatrix);
-        vec3.transformMat4(this._position, cameraPos, mat4.invert(mat4.create(), movedWordMatrix));
+        mat4.mul(this._viewMatrix, cameraMatrix, movedWorldMatrix);
+        vec3.transformMat4(this._position, cameraPos, mat4.invert(mat4.create(), movedWorldMatrix));
         
         super.updateCPU(0);
     }

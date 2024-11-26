@@ -9,6 +9,6 @@ export * from "./orbit";
 export * from "./ortho_2d";
 export * from "./smooth";
 export * from "./vrCamera";
-export * from "./wordTransform";
+export * from "./worldTransform";
 
 export type Camera3D = OrbitCamera | SmoothCamera | RegularCamera | VRCamera;
