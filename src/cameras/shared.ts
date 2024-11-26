@@ -1,4 +1,5 @@
 import { mat4, vec3, vec4 } from "gl-matrix";
+import { OrbitCameraConfiguration } from "./orbit";
 
 export function toRadian(n: number): number {
     return n * (Math.PI / 180);
@@ -34,17 +35,6 @@ export enum CameraConfigurationType {
 
 export type CameraConfiguration = OrbitCameraConfiguration | OrthoCameraConfiguration | SmoothCameraConfiguration;
 
-export type OrbitCameraConfiguration = {
-    type: CameraConfigurationType.Orbit,
-
-    rotX: number,
-    rotY: number,
-    distance: number,
-
-    position: { x: number, y: number, z: number },
-    lookAtPosition: { x: number, y: number, z: number },
-}
-
 export type OrthoCameraConfiguration = {
     type: CameraConfigurationType.Ortho,
 
@@ -68,7 +58,7 @@ export enum ProjectionType {
     Custom
 }
 
-export class Camera {
+export abstract class Camera {
     protected _width: number;
     protected _height: number;
 
@@ -142,42 +132,28 @@ export class Camera {
         return this._dirty;
     }
 
-    public get cameraConfiguration(): CameraConfiguration {
-        return {
-            type: CameraConfigurationType.Orbit,
-
-            rotX: 0.0,
-            rotY: 0.0,
-            distance: 0.0,
-
-            position: { x: this._position[0], y: this._position[1], z: this._position[2] },
-            lookAtPosition: { x: 0.0, y: 0.0, z: 0.0 },            
-        }
-    }
-
-
     get ignoreEvents(): boolean {
         return this._eventStartedElsewhere || this._ignoreEvents;
     }
 
+    public get version(): number {
+        return this._version;
+    }
+
     public set width(width: number) {
         this._width = width;
-
         this.updateCPU(0);
     }
 
     public set height(height: number) {
         this._height = height;
-
         this.updateCPU(0);
     }
 
     public set near(near: number) {
         this._near = near;
-
         this.updateCPU(0);
     }
-
 
     set ignoreEvents(value: boolean) {
         this._ignoreEvents = value
@@ -245,11 +221,8 @@ export class Camera {
         this._dirty = false;
     }
 
-    public onMouseDown(event: MouseEvent): void {
-    }
-
-    public onMouseMove(event: MouseEvent): void {
-    }
+    public onMouseDown(event: MouseEvent): void {}
+    public onMouseMove(event: MouseEvent): void {}
 
     public onMouseUp(event: MouseEvent): void {
         if (event.buttons === 0) {
@@ -261,7 +234,6 @@ export class Camera {
         if (event.buttons !== 0) {
             this._eventStartedElsewhere = true;
         }
-
     }
 
     public onMouseLeave(event: MouseEvent): void {
@@ -272,11 +244,5 @@ export class Camera {
         this._version++;
     }
 
-    public onKeyDown(event: KeyboardEvent): void {
-
-    }
-
-    public get version(): number {
-        return this._version;
-    }
+    public onKeyDown(event: KeyboardEvent): void {}
 }

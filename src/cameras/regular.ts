@@ -1,6 +1,7 @@
-import { Camera, type OrbitCameraConfiguration, toRadian} from "./shared";
+import { Camera, toRadian} from "./shared";
 import { mat4,  quat,  vec3 } from "gl-matrix";
 import { WorldTransformation } from "./worldTransform";
+import { OrbitCameraConfiguration } from "./orbit";
 
 // const TAU = Math.PI * 2.0;
 // const PI = Math.PI;
