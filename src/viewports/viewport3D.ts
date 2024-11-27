@@ -122,6 +122,7 @@ export class Viewport3D extends Viewport {
         this.ssaoEnabled = ssaoEnabled;
         this._pipelines = ViewportPipelines.getInstance(graphicsLibrary);
 
+
         this.mergeGlobalsBuffer = graphicsLibrary.device.createBuffer({
             size: 128,
             usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST,
@@ -131,6 +132,11 @@ export class Viewport3D extends Viewport {
             layout: this._pipelines.bindGroupLayouts.get("MergeGlobals")!,
             entries: [{ binding: 0, resource: { buffer: this.mergeGlobalsBuffer } }],
         });
+    }
+
+    public setClearColor(color: GPUColorDict): void {
+        super.setClearColor(color);
+        this.deferredPass.clearColor = color;
     }
 
     public resize(width: number, height: number): void {

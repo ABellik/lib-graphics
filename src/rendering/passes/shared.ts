@@ -4,6 +4,9 @@ export interface PassRenderSettings {
 }
 
 export abstract class Pass {
+    // Ensure that a custom clear color can be set as parameter
+    public clearColor: GPUColorDict = { r: 0.0, g: 0.0, b: 0.0, a: 1.0 };
+
     // Called before the frame before command encoding begins
     public beforeRender(): void {}
 

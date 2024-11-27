@@ -12,7 +12,7 @@ export abstract class Viewport {
   protected _camera: Camera3D | null = null;
 
   //#region Options
-  public clearColor: GPUColorDict = { r: 0.0, g: 0.0, b: 0.0, a: 1.0 };
+  protected clearColor: GPUColorDict = { r: 0.0, g: 0.0, b: 0.0, a: 1.0 };
   //#endregion
 
   protected _lastFrametime = 0;
@@ -42,6 +42,10 @@ export abstract class Viewport {
 
     this._camera = camera ?? new OrbitCamera(this.graphicsLibrary.device, this.width, this.height);
     this._scene = scene ?? graphicsLibrary.createScene();
+  }
+
+  public setClearColor(color: GPUColorDict) {
+    this.clearColor = color;
   }
 
   public deallocate(): void {

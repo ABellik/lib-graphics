@@ -414,7 +414,7 @@ export class DeferredPass extends Pass {
             colorAttachments: [
                 {
                     view: this._colorTexture.createView(),
-                    clearValue: { r: 0.0, g: 0.0, b: 0.0, a: 1.0 },
+                    clearValue: this.clearColor,
                     loadOp: "clear",
                     storeOp: "store",
                 },
@@ -471,7 +471,7 @@ export class DeferredPass extends Pass {
             colorAttachments: [
                 {
                     view: this._colorTexture.createView(),
-                    clearValue: { r: 0.0, g: 0.0, b: 0.0, a: 1.0 },
+                    clearValue: this.clearColor,
                     loadOp: "load",
                     storeOp: "store",
                 },
