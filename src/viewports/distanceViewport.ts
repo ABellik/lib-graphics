@@ -162,6 +162,8 @@ export function globalsToArrayBuffer(globals: Globals): ArrayBuffer {
 export class DistanceViewport {
     protected graphicsLibrary: GraphicsLibrary;
 
+    public clearColor: GPUColor =  { r: 0.0, g: 0.0, b: 0.0, a: 1.0 };
+
     //protected _canvas: HTMLCanvasElement | null = null;
     //protected _context: GPUCanvasContext | null = null;
 
@@ -301,7 +303,7 @@ export class DistanceViewport {
             colorAttachments: [
                 {
                     view: textureView,
-                    clearValue: { r: 0.0, g: 0.0, b: 0.0, a: 1.0 },
+                    clearValue: this.clearColor,
                     loadOp: "clear",
                     storeOp: "store",
                 },
