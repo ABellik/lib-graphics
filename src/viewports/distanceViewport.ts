@@ -162,10 +162,14 @@ export function globalsToArrayBuffer(globals: Globals): ArrayBuffer {
 export class DistanceViewport {
     protected graphicsLibrary: GraphicsLibrary;
 
-    public clearColor: GPUColor =  { r: 0.0, g: 0.0, b: 0.0, a: 1.0 };
+    private clearColor: GPUColor =  { r: 0.0, g: 0.0, b: 0.0, a: 1.0 };
 
     //protected _canvas: HTMLCanvasElement | null = null;
     //protected _context: GPUCanvasContext | null = null;
+
+    public setClearColor(color: GPUColor) {
+        this.clearColor = color;
+    }
 
     private width = 0;
     private height = 0;
@@ -289,11 +293,14 @@ export class DistanceViewport {
 
     
     async render(textureView: GPUTextureView): Promise<void> {
+        //console.log("Rendering");
         const device = this.graphicsLibrary.device;
         //const renderPipelines = this.graphicsLibrary.renderPipelines;
         //const bindGroupLayouts = this.graphicsLibrary.bindGroupLayouts;
 
         if (this._camera === null || this.width <= 0 || this.height <= 0 || this.globals.sizes[0] <= 0 || this.positions === null || this.colors === null) {
+            //console.log(this._camera === null || this.width <= 0 || this.height <= 0 || this.globals.sizes[0] <= 0 || this.positions === null || this.colors === null);
+            //console.log(this._camera, this.width, this.height, this.globals.sizes[0], this.positions, this.colors);
             return;
         }
 
