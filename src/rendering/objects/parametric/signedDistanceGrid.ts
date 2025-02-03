@@ -288,7 +288,7 @@ export class SignedDistanceGrid extends IParametricObject {
                 
                 // Intersect an outline if object is set to outline 
                 if (${this.variableName}[i].outline.x == 1.0) {
-                    var offset = -0.01;
+                    var offset = -${this.variableName}[i].outline.a;
                     var intersection_one = ray${this.typeName}Intersection(ray, ${this.variableName}[i], i, 0.0);
                     var intersection_two = ray${this.typeName}Intersection(ray, ${this.variableName}[i], i, offset / ${this.variableName}[i].scale.x);
                     if (intersection_two.t > 0.0 && !(intersection_one.t > 0.0)) {       
@@ -711,8 +711,9 @@ export class SignedDistanceGrid extends IParametricObject {
         this.onAllocationMoved();
     }
 
-    public outline(outline: boolean, index: number = 0) {
+    public outline(outline: boolean, width: number = 0.01, index: number = 0) {
         this.properties[index].outline[0] = outline ? 1.0 : 0.0;
+        this.properties[index].outline[3] = width;
         this._dirtyCPU = true;
         this._dirtyGPU = true;
     }
