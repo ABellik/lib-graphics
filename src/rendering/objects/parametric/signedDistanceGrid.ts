@@ -484,7 +484,7 @@ export class SignedDistanceGrid extends IParametricObject {
         // This also assumes that the scale is uniform in all dimensions else 
         // this calculation completely wrong
         const tWorldSpace = t * this.properties[0].scale[0];
-        return {bin: 0, t: tWorldSpace, object: this};
+        return {bin: 0, t: tWorldSpace, object: this, instance: 0};
     }
 
     public toBoundingBoxes(): BoundingBox[] {

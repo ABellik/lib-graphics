@@ -576,7 +576,7 @@ export class Spline extends IParametricObject {
             return null;
         }
 
-        return { bin:bestBin, t: bestT, object: this };
+        return { bin:bestBin, t: bestT, object: this, instance: 0 };
     }
 
     public toBoundingBoxes(): BoundingBox[] {

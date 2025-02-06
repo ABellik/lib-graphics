@@ -227,7 +227,7 @@ export class RoundedCone extends IParametricObject {
             const lengthEnd = vec3.length(vec3.sub(vec3.create(), intersection, this.properties.end));
           
             const bestBin = lengthStart <= lengthEnd ? 0 : 1;
-            return { t, object: this, bin: bestBin };
+            return { t, object: this, bin: bestBin, instance: 0 };
         }
 
         // caps          
@@ -258,7 +258,7 @@ export class RoundedCone extends IParametricObject {
         const lengthEnd = vec3.length(vec3.sub(vec3.create(), intersection, this.properties.end));
       
         const bestBin = lengthStart <= lengthEnd ? 0 : 1;
-        return { t, object: this, bin: bestBin };
+        return { t, object: this, bin: bestBin, instance: 0 };
     }
 
     public toBoundingBoxes(): BoundingBox[] {

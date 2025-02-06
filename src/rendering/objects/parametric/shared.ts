@@ -7,6 +7,7 @@ export interface Intersection{
     t: number,
     bin: number,
     object: IParametricObject,
+    instance: number,
 }
 
 export abstract class IParametricObject extends ConcreteObject {   

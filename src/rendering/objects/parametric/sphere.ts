@@ -131,7 +131,7 @@ export class Sphere extends IParametricObject {
         }
         h = Math.sqrt( h );
         const t = -b - h;
-        return {bin: 0, t, object: this};
+        return {bin: 0, t, object: this, instance: 0};
     }
 
     public toBoundingBoxes(): BoundingBox[] {

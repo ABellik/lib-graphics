@@ -267,7 +267,7 @@ export class RoundedConeInstanced extends IParametricObject {
         const lengthEnd = vec3.length(vec3.sub(vec3.create(), intersection, this.properties[bestCone].end));
       
         const bestBin = lengthStart <= lengthEnd ? bestCone : bestCone + 1;
-        return { t: bestT, object: this, bin: bestBin };
+        return { t: bestT, object: this, bin: bestBin, instance: bestCone };
     }
 
     public toBoundingBoxes(): BoundingBox[] {
