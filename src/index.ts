@@ -4,6 +4,7 @@ import { Circle, RoundedCone, RoundedConeInstanced, Sphere, Spline, SignedDistan
 import { Scene } from "./scene";
 import { DistanceViewport } from "./viewports/distanceViewport";
 import { Viewport3D } from "./viewports/index";
+import { Viewport2D } from "./viewports/viewport2D";
 
 export * from "./cameras/index";
 export * from "./allocation/index";
@@ -97,6 +98,10 @@ export class GraphicsLibrary {
 
     public create2DViewport(): DistanceViewport {
         return new DistanceViewport(this);
+    }
+
+    public create2DTileViewport(): Viewport2D {
+        return new Viewport2D(this);
     }
 
     public createScene(): Scene {
