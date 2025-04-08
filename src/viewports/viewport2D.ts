@@ -1,6 +1,7 @@
 import { CameraConfigurationType, Ortho2DCamera, type OrthoCameraConfiguration } from "../cameras/index";
 import { GraphicsLibrary } from "..";
 import { tileShader } from "../rendering/objects/2d/tileShader";
+import { Tile } from "../rendering/objects/2d/tile";
 
 //export const squareRadius = 0.7071;
 //export const squareDiameter = 2.0 * squareRadius;
@@ -96,9 +97,11 @@ export function globalsToArrayBuffer(globals: Globals): ArrayBuffer {
 */
 
 export class Viewport2D {
-    protected graphicsLibrary: GraphicsLibrary;
+    private graphicsLibrary: GraphicsLibrary;
 
     private clearColor: GPUColor =  { r: 0.0, g: 0.0, b: 0.0, a: 1.0 };
+
+    private tiles: Tile[] = [];
 
     private pipeline!: GPURenderPipeline;
     private cameraBGL!: GPUBindGroupLayout;
@@ -128,7 +131,7 @@ export class Viewport2D {
         //this._scene = null;
       }
 
-    resize(width: number, height: number): void {
+    public resize(width: number, height: number): void {
         this.width = width;
         this.height = height;
 
@@ -144,7 +147,13 @@ export class Viewport2D {
 
     }
     
-    async render(textureView: GPUTextureView): Promise<void> {
+    public addTile() {
+        let tile = new Tile(this.graphicsLibrary);
+        this.tiles.push(tile);
+        return tile;
+    }
+
+    public async render(textureView: GPUTextureView): Promise<void> {
         const device = this.graphicsLibrary.device;
 
         if (this._camera === null || this.width <= 0 || this.height <= 0) {
@@ -168,14 +177,6 @@ export class Viewport2D {
 
         this._camera.updateGPU(device.queue);
 
-        /*
-        const globalsBuffer = globalsToArrayBuffer(this.globals);
-        device.queue.writeBuffer(
-            this.globalsGPU, 0,
-            globalsBuffer, 0,
-            globalsBuffer.byteLength,
-        );*/
-
         const primitivesBindGroup =
             device.createBindGroup({
                 layout: this.cameraBGL,
@@ -192,9 +193,12 @@ export class Viewport2D {
 
         passEncoder.setPipeline(this.pipeline);
         passEncoder.setBindGroup(0, primitivesBindGroup);
-        passEncoder.draw(4, 1, 0, 0);
-        passEncoder.end();
+        
+        this.tiles.forEach(tile => {
+            tile.render(passEncoder);
+        });
 
+        passEncoder.end();
         device.queue.submit([commandEncoder.finish()]);
     }
 
