@@ -1,6 +1,6 @@
 import { CameraConfigurationType, Ortho2DCamera, type OrthoCameraConfiguration } from "../cameras/index";
 import { GraphicsLibrary } from "..";
-import { tileShader } from "./tileShader";
+import { tileShader } from "../rendering/objects/2d/tileShader";
 
 //export const squareRadius = 0.7071;
 //export const squareDiameter = 2.0 * squareRadius;
@@ -10,50 +10,8 @@ export class BinPosition {
     to = 0;
 }
 */
-function distanceMapBindGroupLayout(): GPUBindGroupLayoutDescriptor {
-    return {
-        label: "Tile Camera BGL",
-        entries: [
-            {
-                binding: 0,
-                visibility: GPUShaderStage.VERTEX | GPUShaderStage.FRAGMENT,
-                buffer: {
-                    type: "uniform",
-                }
-            }
-        ],
-    };
-}
 
-function distanceMapPipelineLayout(device : GPUDevice): GPUPipelineLayoutDescriptor {
-    return {
-        bindGroupLayouts: [
-            device.createBindGroupLayout(distanceMapBindGroupLayout())
-        ],
-    }
-}
 
-function distanceMapPipelineDescriptor(device: GPUDevice): GPURenderPipelineDescriptor {
-    return {
-        layout: device.createPipelineLayout(distanceMapPipelineLayout(device)),
-        vertex: {
-            module: device.createShaderModule({ code: tileShader }),
-            entryPoint: "main_vertex",
-        },
-        fragment: {
-            module: device.createShaderModule({ code: tileShader }),
-            entryPoint: "main_fragment",
-            targets: [
-                {
-                    format: "bgra8unorm",
-                },
-            ]
-        },
-        primitive: {
-            topology: "triangle-strip",
-        },
-    };
-}
 /*
 export function worldPositionToBins(position: vec4, lod = 0): BinPosition {
     // Line Slope Form
@@ -142,8 +100,8 @@ export class Viewport2D {
 
     private clearColor: GPUColor =  { r: 0.0, g: 0.0, b: 0.0, a: 1.0 };
 
-    //protected _canvas: HTMLCanvasElement | null = null;
-    //protected _context: GPUCanvasContext | null = null;
+    private pipeline!: GPURenderPipeline;
+    private cameraBGL!: GPUBindGroupLayout;
 
     public setClearColor(color: GPUColor) {
         this.clearColor = color;
@@ -154,29 +112,10 @@ export class Viewport2D {
 
     private _camera: Ortho2DCamera;
 
-    //public globals: Globals;
-    //private globalsGPU: GPUBuffer;
-
-    //private positions: GPUBuffer | null = null;
-    //private colors: GPUBuffer | null = null;
-
-    constructor(
-        graphicsLibrary: GraphicsLibrary,
-    ) {
+    constructor(graphicsLibrary: GraphicsLibrary) {
         this.graphicsLibrary = graphicsLibrary;
-        this._camera = new Ortho2DCamera(
-            this.graphicsLibrary.device,
-            0,
-            0
-        );
-/*
-        this.globals = globalsNew();
-        this.globalsGPU = this.graphicsLibrary.device.createBuffer({
-            size: 512,
-            usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST,
-        });
-*/
-
+        this._camera = new Ortho2DCamera(this.graphicsLibrary.device, 0, 0);
+        this.createPipelines(graphicsLibrary);
     }
 
     public deallocate(): void {
@@ -239,7 +178,7 @@ export class Viewport2D {
 
         const primitivesBindGroup =
             device.createBindGroup({
-                layout: device.createBindGroupLayout(distanceMapBindGroupLayout()),
+                layout: this.cameraBGL,
                 entries: [
                     {
                         binding: 0,
@@ -251,8 +190,8 @@ export class Viewport2D {
                 ]
             });
 
+        passEncoder.setPipeline(this.pipeline);
         passEncoder.setBindGroup(0, primitivesBindGroup);
-        passEncoder.setPipeline(device.createRenderPipeline(distanceMapPipelineDescriptor(device)));
         passEncoder.draw(4, 1, 0, 0);
         passEncoder.end();
 
@@ -377,4 +316,71 @@ export class Viewport2D {
     public get canvas(): HTMLCanvasElement | null {
         return null;
     } 
+
+
+    private createPipelines(graphicsLibrary: GraphicsLibrary) {
+        const device = graphicsLibrary.device;
+
+        this.cameraBGL = device.createBindGroupLayout({
+            label: "CameraBGL",
+            entries: [
+                {
+                    binding: 0,
+                    visibility: GPUShaderStage.VERTEX | GPUShaderStage.FRAGMENT,
+                    buffer: {
+                        type: "uniform",
+                    }
+                }
+            ],
+        });
+
+        const pipelineDescriptor: GPUPipelineLayoutDescriptor = {
+            bindGroupLayouts: [
+                this.cameraBGL
+            ]
+        }
+
+        const renderPipelineDescriptor: GPURenderPipelineDescriptor = {
+            layout: device.createPipelineLayout(pipelineDescriptor),
+            vertex: {
+                module: device.createShaderModule({ label: "TileVertexShader", code: tileShader }),
+                entryPoint: "main_vertex",
+            },
+            fragment: {
+                module: device.createShaderModule({ label: "TileFragmentShader",  code: tileShader }),
+                entryPoint: "main_fragment",
+                targets: [
+                    {
+                        format: navigator.gpu.getPreferredCanvasFormat(),
+                        blend: {
+                            color: {
+                                srcFactor: "src-alpha",
+                                dstFactor: "one-minus-src-alpha",
+                                operation: "add",
+                            },
+                            alpha: {
+                                operation: "add",
+                                srcFactor: "zero",
+                                dstFactor: "one",
+                            }
+                        },                    
+                    },
+                ]
+            },
+            primitive: {
+                topology: "triangle-strip",
+            },
+            // Depth is currently unused, but i keep this here just in case
+            /*
+            depthStencil: {
+                depthWriteEnabled: true,
+                depthCompare: "greater",
+                format: "depth32float",
+            },
+            */
+        }
+
+        this.pipeline = device.createRenderPipeline(renderPipelineDescriptor);
+    }
+
 }
