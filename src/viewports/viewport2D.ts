@@ -147,8 +147,8 @@ export class Viewport2D {
 
     }
     
-    public addTile() {
-        let tile = new Tile(this.graphicsLibrary);
+    public addTile(width: number, height: number, texData: number[]) {
+        let tile = new Tile(this.graphicsLibrary, width, height, texData);
         this.tiles.push(tile);
         return tile;
     }

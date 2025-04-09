@@ -20,6 +20,8 @@ struct Tile {
 
 @group(0) @binding(0) var<uniform> camera: Camera;
 @group(1) @binding(0) var<uniform> tile: Tile;
+@group(1) @binding(1) var texture: texture_2d<f32>;
+@group(1) @binding(2) var texSampler: sampler;
 
 struct VertexOutput {
     @builtin(position) Position : vec4<f32>,
@@ -45,7 +47,7 @@ struct FragmentOutput {
 
 @fragment
 fn main_fragment(@builtin(position) Position : vec4<f32>, @location(0) textureCoordinates : vec2<f32>) -> FragmentOutput {
-    let color = tile.color;
+    let color = textureSample(texture, texSampler, textureCoordinates);
     return FragmentOutput(
         color
     );

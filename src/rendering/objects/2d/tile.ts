@@ -25,16 +25,22 @@ export class Tile {
                 binding: 0,
                 visibility: GPUShaderStage.VERTEX | GPUShaderStage.FRAGMENT,
                 buffer: { type: "uniform" },
-            }
-            // This is prepared for adding texture to the tile
-            /*, {
+            },
+            {
                 binding: 1,
                 visibility: GPUShaderStage.FRAGMENT,
                 texture: {
-                    sampleType: "unfilterable-float",
+                    sampleType: "float",
                     viewDimension: "2d"
                 }
-            }*/]
+            },
+            {
+                binding: 2,
+                visibility: GPUShaderStage.FRAGMENT,
+                sampler: {
+                    type: "filtering"
+                }        
+            }]
         });
     }
 
@@ -46,11 +52,12 @@ export class Tile {
     private dirty = false;
 
     private bindGroup!: GPUBindGroup;
-    // private texture: GPUTexture | null = null;
+    private texture!: GPUTexture;
+    private sampler!: GPUSampler;
     private graphicsLibrary;
 
 
-    constructor(graphicsLibrary: GraphicsLibrary) {
+    constructor(graphicsLibrary: GraphicsLibrary, width: number, height: number, texData: number[]) {
         this.graphicsLibrary = graphicsLibrary;
 
         if (!Tile.bindGroupLayout) {
@@ -67,8 +74,29 @@ export class Tile {
                 usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST,
         });
 
+        this.addTexture(width, height, texData);
         this.propertiesChanged();
     }
+
+    public addTexture(width: number, height: number, texData: number[]) {
+        this.texture = this.graphicsLibrary.device.createTexture({
+            size: { width: width, height: height },
+            format: 'rgba8unorm',
+            dimension: "2d",
+            mipLevelCount: 1,
+            usage: GPUTextureUsage.TEXTURE_BINDING | GPUTextureUsage.COPY_DST,
+        });
+
+        this.graphicsLibrary.device.queue.writeTexture(
+            { texture: this.texture },
+            new Uint8Array(texData),
+            { bytesPerRow: width * 4 },
+            { width: width, height: height },
+        );
+
+        this.sampler = this.graphicsLibrary.device.createSampler();
+    }
+
 
     public color(c: vec3, alpha: number = 1.0): void {
         this.properties.color = vec4.fromValues(c[0], c[1], c[2], alpha)
@@ -112,20 +140,24 @@ export class Tile {
         );
 
         this.bindGroup = this.graphicsLibrary.device.createBindGroup({
+            label: "Tile Bind Group",
             layout: Tile.bindGroupLayout,
-            entries: [
+            entries: 
+            [
                 {
-                    binding: 0, resource: {
+                    binding: 0,
+                    resource: {
                         buffer: this.propertiesBuffer,
                         offset: 0,
                         size: TileUniformSize,
                     },
                 },
-                /*
                 {
-                    binding: 1, resource: this._texture.createView()
+                    binding: 1, resource: this.texture.createView()
                 },
-                */
+                {
+                    binding: 2, resource: this.sampler
+                }
             ]
         });
 
