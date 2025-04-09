@@ -1,6 +1,6 @@
 import type { GraphicsLibrary } from "../../..";
 import * as r from "restructure";
-import { mat4, vec3, vec4 } from "gl-matrix";
+import { mat4, vec2, vec3, vec4 } from "gl-matrix";
 
 export interface TileProperties {
     modelMatrix: mat4,
@@ -40,7 +40,8 @@ export class Tile {
 
     public properties: TileProperties;
     private propertiesBuffer: GPUBuffer;
-    private scaleNum: number = 0;
+    private scaleNum: number = 1;
+    private rotateRad: number = 0;
     private translateVec: vec3 = vec3.fromValues(0, 0, 0);
     private dirty = false;
 
@@ -59,7 +60,7 @@ export class Tile {
         this.properties = TileStruct.fromBuffer(new Uint8Array(TileUniformSize));
         this.properties.modelMatrix = mat4.create();
         this.properties.modelMatrixInverse = mat4.invert(mat4.create(), this.properties.modelMatrix);
-        this.properties.color = vec4.fromValues(1.0, 1.0, 1.0, 1.0);
+        this.properties.color = vec4.fromValues(0.0, 1.0, 1.0, 1.0);
     
         this.propertiesBuffer = this.graphicsLibrary.device.createBuffer({
                 size: TileUniformSize,
@@ -69,36 +70,38 @@ export class Tile {
         this.propertiesChanged();
     }
 
-    public color(c: vec3): void {
-        this.properties.color[0] = c[0];
-        this.properties.color[1] = c[1];
-        this.properties.color[2] = c[2];
+    public color(c: vec3, alpha: number = 1.0): void {
+        this.properties.color = vec4.fromValues(c[0], c[1], c[2], alpha)
         this.dirty = true;
     }
 
-    public translate(t: vec3): void {
-        this.translateVec = vec3.fromValues(t[0], t[1], t[2]);
-        this.properties.modelMatrix = mat4.create();
-        mat4.scale(this.properties.modelMatrix, this.properties.modelMatrix, vec3.fromValues(this.scaleNum, this.scaleNum, this.scaleNum));
-        mat4.translate(this.properties.modelMatrix, this.properties.modelMatrix, t);
-
-        this.properties.modelMatrixInverse = mat4.invert(mat4.create(), this.properties.modelMatrix);
-
+    public translate(t: vec2): void {
+        this.translateVec = vec3.fromValues(t[0], t[1], 0);
+        this.updateModelMatrix()
         this.dirty = true;
     }
 
     public scale(s: number): void {
+        if (s <= 0) {
+            throw "Scale must be larger than zero."
+        }
+
         this.scaleNum = s;
+        this.updateModelMatrix();
+    }
+
+    public rotate(degrees: number): void {
+        this.rotateRad = degrees * (Math.PI / 180.0)
+        this.updateModelMatrix();
+    }
+
+    private updateModelMatrix(): void {
         this.properties.modelMatrix = mat4.create();
-        mat4.scale(this.properties.modelMatrix, this.properties.modelMatrix, vec3.fromValues(s, s, s));  
-
-        this.properties.modelMatrix[12] = this.translateVec[0];
-        this.properties.modelMatrix[13] = this.translateVec[1];
-        this.properties.modelMatrix[14] = this.translateVec[2];
-        this.properties.modelMatrix[15] = 1.0;
+        mat4.translate(this.properties.modelMatrix, this.properties.modelMatrix, this.translateVec);
+        mat4.rotateZ(this.properties.modelMatrix, this.properties.modelMatrix, this.rotateRad);  
+        mat4.scale(this.properties.modelMatrix, this.properties.modelMatrix, vec3.fromValues(this.scaleNum, this.scaleNum, this.scaleNum));
         this.properties.modelMatrixInverse = mat4.invert(mat4.create(), this.properties.modelMatrix);
-
-        this.dirty = true;
+        this.dirty = true
     }
 
     public propertiesChanged(): void {
@@ -125,6 +128,8 @@ export class Tile {
                 */
             ]
         });
+
+        this.dirty = false;
     }
 
     public render(encoder: GPURenderPassEncoder): void {                
@@ -133,7 +138,7 @@ export class Tile {
         }
 
         // Set bind group
-        //encoder.setBindGroup(1, this.bindGroup);
+        encoder.setBindGroup(1, this.bindGroup);
         encoder.draw(4, 1, 0, 0);
     }
 }

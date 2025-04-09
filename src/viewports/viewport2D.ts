@@ -338,9 +338,11 @@ export class Viewport2D {
             ],
         });
 
+        Tile.createBindGroupLayouts(device);
         const pipelineDescriptor: GPUPipelineLayoutDescriptor = {
             bindGroupLayouts: [
-                this.cameraBGL
+                this.cameraBGL,
+                Tile.bindGroupLayout
             ]
         }
 
