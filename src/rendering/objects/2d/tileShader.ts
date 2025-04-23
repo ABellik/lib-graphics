@@ -35,7 +35,7 @@ fn main_vertex(@builtin(vertex_index) vertexIndex : u32) -> VertexOutput {
 
     // Set the positions of the rectangle to be centered at 0,0 with edge size 1
     let position: vec4<f32> = vec4<f32>(f32(x) - 0.5, f32(y) - 0.5, 0.0, 1.0);
-    let texture_coord: vec2<f32> = vec2<f32>(f32(x), f32(y));
+    let texture_coord: vec2<f32> = vec2<f32>(f32(x), 1.0 - f32(y));
 
     return VertexOutput(camera.projectionView * tile.model * position, texture_coord);
 }  

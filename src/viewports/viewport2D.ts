@@ -101,7 +101,7 @@ export class Viewport2D {
 
     private clearColor: GPUColor =  { r: 0.0, g: 0.0, b: 0.0, a: 1.0 };
 
-    private tiles: Tile[] = [];
+    private tiles: Map<number,Tile> = new Map();
 
     private pipeline!: GPURenderPipeline;
     private cameraBGL!: GPUBindGroupLayout;
@@ -112,6 +112,8 @@ export class Viewport2D {
 
     private width = 0;
     private height = 0;
+
+    private idSeed: number = 0;
 
     private _camera: Ortho2DCamera;
 
@@ -147,10 +149,16 @@ export class Viewport2D {
 
     }
     
-    public addTile(width: number, height: number, texData: number[]) {
-        let tile = new Tile(this.graphicsLibrary, width, height, texData);
-        this.tiles.push(tile);
-        return tile;
+    public addTile(width: number, height: number, texData: number[]): [number, Tile] {
+        let id = this.idSeed
+        let tile = new Tile(this.graphicsLibrary, width, height, texData, id);
+        this.tiles.set(id, tile);
+        this.idSeed++
+        return [id, tile];
+    }
+
+    public removeTile(id: number) {
+        this.tiles.delete(id);
     }
 
     public async render(textureView: GPUTextureView): Promise<void> {

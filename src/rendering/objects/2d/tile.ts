@@ -43,22 +43,24 @@ export class Tile {
             }]
         });
     }
-
+    
+    private id: number;
     public properties: TileProperties;
     private propertiesBuffer: GPUBuffer;
     private scaleNum: number = 1;
     private rotateRad: number = 0;
     private translateVec: vec3 = vec3.fromValues(0, 0, 0);
     private dirty = false;
-
+    
     private bindGroup!: GPUBindGroup;
     private texture!: GPUTexture;
     private sampler!: GPUSampler;
     private graphicsLibrary;
 
 
-    constructor(graphicsLibrary: GraphicsLibrary, width: number, height: number, texData: number[]) {
+    constructor(graphicsLibrary: GraphicsLibrary, width: number, height: number, texData: number[], id: number) {
         this.graphicsLibrary = graphicsLibrary;
+        this.id = id
 
         if (!Tile.bindGroupLayout) {
             Tile.createBindGroupLayouts(graphicsLibrary.device);
@@ -76,6 +78,10 @@ export class Tile {
 
         this.addTexture(width, height, texData);
         this.propertiesChanged();
+    }
+
+    public getId() {
+        return this.id;
     }
 
     public addTexture(width: number, height: number, texData: number[]) {
