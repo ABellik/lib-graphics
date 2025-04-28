@@ -6,14 +6,17 @@ export interface TileProperties {
     modelMatrix: mat4,
     modelMatrixInverse: mat4,
     color: vec4,
+    props: vec4
 }
 
-const TileUniformSize: number = 144;
+// Because it is padded to 16 bytes -> 144 + 16 props 
+const TileUniformSize: number = 160;
 
 export const TileStruct = new r.Struct({
     modelMatrix: new r.Array(r.floatle, 16),
     modelMatrixInverse: new r.Array(r.floatle, 16),
-    color: new r.Array(r.floatle, 4)
+    color: new r.Array(r.floatle, 4),
+    props: new r.Array(r.floatle, 4)
 });
 
 export class Tile {
@@ -70,7 +73,8 @@ export class Tile {
         this.properties.modelMatrix = mat4.create();
         this.properties.modelMatrixInverse = mat4.invert(mat4.create(), this.properties.modelMatrix);
         this.properties.color = vec4.fromValues(0.0, 1.0, 1.0, 1.0);
-    
+        this.properties.props = [0.0, 0.0, 0.0, 0.0];
+
         this.propertiesBuffer = this.graphicsLibrary.device.createBuffer({
                 size: TileUniformSize,
                 usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST,
@@ -103,6 +107,17 @@ export class Tile {
         this.sampler = this.graphicsLibrary.device.createSampler();
     }
 
+    // Flip tile around y = -x axis
+    public flip(flip: boolean) {
+        this.properties.props[1] = flip ? 1.0 : 0.0;
+        this.dirty = true;
+    }
+
+    // Mirror bottom triangle of tile around y = -x axis
+    public mirror(mirror: boolean) {
+        this.properties.props[0] = mirror ? 1.0 : 0.0;
+        this.dirty = true;
+    }
 
     public color(c: vec3, alpha: number = 1.0): void {
         this.properties.color = vec4.fromValues(c[0], c[1], c[2], alpha)

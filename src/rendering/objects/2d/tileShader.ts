@@ -16,6 +16,8 @@ struct Tile {
     model: mat4x4<f32>,
     model_inverse: mat4x4<f32>,
     color: vec4<f32>,
+    mirror: f32,
+    flip: f32,
 };
 
 @group(0) @binding(0) var<uniform> camera: Camera;
@@ -30,12 +32,18 @@ struct VertexOutput {
   
 @vertex
 fn main_vertex(@builtin(vertex_index) vertexIndex : u32) -> VertexOutput {
-    let x: u32 = u32(vertexIndex + 1) % u32(2);
-    let y: u32 = 1 - (vertexIndex / u32(2));
+    var coords: vec2<u32> = vec2<u32>(u32(vertexIndex + 1) % u32(2), 1 - (vertexIndex / u32(2)));
 
     // Set the positions of the rectangle to be centered at 0,0 with edge size 1
-    let position: vec4<f32> = vec4<f32>(f32(x) - 0.5, f32(y) - 0.5, 0.0, 1.0);
-    let texture_coord: vec2<f32> = vec2<f32>(f32(x), 1.0 - f32(y));
+    let position: vec4<f32> = vec4<f32>(f32(coords.x) - 0.5, f32(coords.y) - 0.5, 0.0, 1.0);
+    if (tile.mirror == 1.0 && vertexIndex == 0) {
+        coords = vec2<u32>(0, 0);
+    }
+
+    if (tile.flip == 1.0) {
+        coords = vec2<u32>(1 - coords.y, 1 - coords.x);
+    }
+    let texture_coord: vec2<f32> = vec2<f32>(f32(coords.x), 1.0 - f32(coords.y));
 
     return VertexOutput(camera.projectionView * tile.model * position, texture_coord);
 }  
@@ -48,6 +56,9 @@ struct FragmentOutput {
 @fragment
 fn main_fragment(@builtin(position) Position : vec4<f32>, @location(0) textureCoordinates : vec2<f32>) -> FragmentOutput {
     let color = textureSample(texture, texSampler, textureCoordinates);
+    if (all(color.rgb == vec3<f32>(0.0, 0.0, 0.0))) {
+        discard;
+    }
     return FragmentOutput(
         color
     );
