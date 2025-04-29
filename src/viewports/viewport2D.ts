@@ -149,7 +149,7 @@ export class Viewport2D {
 
     }
     
-    public addTile(width: number, height: number, texData: number[]): [number, Tile] {
+    public addTile(width: number, height: number, texData: ArrayBuffer): [number, Tile] {
         let id = this.idSeed
         let tile = new Tile(this.graphicsLibrary, width, height, texData, id);
         this.tiles.set(id, tile);

@@ -18,6 +18,7 @@ struct Tile {
     color: vec4<f32>,
     mirror: f32,
     flip: f32,
+    max_value: f32
 };
 
 @group(0) @binding(0) var<uniform> camera: Camera;
@@ -55,12 +56,33 @@ struct FragmentOutput {
 
 @fragment
 fn main_fragment(@builtin(position) Position : vec4<f32>, @location(0) textureCoordinates : vec2<f32>) -> FragmentOutput {
-    let color = textureSample(texture, texSampler, textureCoordinates);
-    if (all(color.rgb == vec3<f32>(0.0, 0.0, 0.0))) {
+    let value: f32 = textureSample(texture, texSampler, textureCoordinates).r;
+    if (value == -1.0) {
         discard;
     }
+
+    var c_from: vec3<f32> = vec3<f32>(0, 0, 0);
+    var c_to: vec3<f32> = vec3<f32>(0, 0, 0);
+    var t: f32 = 0.0;
+
+    let mval = min(0.1, value);
+    if (mval > 0.01) {
+        c_from = vec3<f32>(0.0, 0.0, 0.0);
+        c_to = vec3<f32>(169.0 / 255.0, 3.0 / 255.0, 22.0 / 255.0);
+        t = (mval - 0.01) / (0.1 - 0.01);
+    } else {
+        if (mval > 0.001) {
+            c_from = vec3<f32>(169.0 / 255.0, 3.0 / 255.0, 22.0 / 255.0);
+            c_to = vec3<f32>(245.0 / 255.0, 176.0 / 255.0, 54.0 / 255.0);
+            t = (mval - 0.001) / (0.01 - 0.001);
+        } else {
+            c_from = vec3<f32>(245.0 / 255.0, 176.0 / 255.0, 54.0 / 255.0);
+            c_to = vec3<f32>(1.0, 1.0, 1.0);
+            t = mval;
+        }
+    }
     return FragmentOutput(
-        color
+        vec4<f32>(mix(c_from, c_to, 1 - t), 1.0)
     );
 }
 `;

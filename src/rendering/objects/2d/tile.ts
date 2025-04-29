@@ -33,7 +33,7 @@ export class Tile {
                 binding: 1,
                 visibility: GPUShaderStage.FRAGMENT,
                 texture: {
-                    sampleType: "float",
+                    sampleType: "unfilterable-float",
                     viewDimension: "2d"
                 }
             },
@@ -41,7 +41,7 @@ export class Tile {
                 binding: 2,
                 visibility: GPUShaderStage.FRAGMENT,
                 sampler: {
-                    type: "filtering"
+                    type: "non-filtering"
                 }        
             }]
         });
@@ -61,7 +61,7 @@ export class Tile {
     private graphicsLibrary;
 
 
-    constructor(graphicsLibrary: GraphicsLibrary, width: number, height: number, texData: number[], id: number) {
+    constructor(graphicsLibrary: GraphicsLibrary, width: number, height: number, texData: ArrayBuffer, id: number) {
         this.graphicsLibrary = graphicsLibrary;
         this.id = id
 
@@ -73,7 +73,7 @@ export class Tile {
         this.properties.modelMatrix = mat4.create();
         this.properties.modelMatrixInverse = mat4.invert(mat4.create(), this.properties.modelMatrix);
         this.properties.color = vec4.fromValues(0.0, 1.0, 1.0, 1.0);
-        this.properties.props = [0.0, 0.0, 0.0, 0.0];
+        this.properties.props = [0.0, 0.0, 0.1, 0.0];
 
         this.propertiesBuffer = this.graphicsLibrary.device.createBuffer({
                 size: TileUniformSize,
@@ -88,10 +88,10 @@ export class Tile {
         return this.id;
     }
 
-    public addTexture(width: number, height: number, texData: number[]) {
+    public addTexture(width: number, height: number, texData: ArrayBuffer) {
         this.texture = this.graphicsLibrary.device.createTexture({
             size: { width: width, height: height },
-            format: 'rgba8unorm',
+            format: 'r32float',
             dimension: "2d",
             mipLevelCount: 1,
             usage: GPUTextureUsage.TEXTURE_BINDING | GPUTextureUsage.COPY_DST,
@@ -99,12 +99,17 @@ export class Tile {
 
         this.graphicsLibrary.device.queue.writeTexture(
             { texture: this.texture },
-            new Uint8Array(texData),
+            texData,
             { bytesPerRow: width * 4 },
             { width: width, height: height },
         );
 
-        this.sampler = this.graphicsLibrary.device.createSampler();
+        this.sampler = this.graphicsLibrary.device.createSampler({ magFilter: "nearest", minFilter: "nearest" });
+    }
+
+    public maxValue(max: number) {
+        this.properties.props[2] = max;
+        this.dirty = true;
     }
 
     // Flip tile around y = -x axis
