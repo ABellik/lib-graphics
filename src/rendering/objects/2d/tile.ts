@@ -52,6 +52,8 @@ export class Tile {
     private propertiesBuffer: GPUBuffer;
     private scaleNum: number = 1;
     private rotateRad: number = 0;
+    private globalRotateRad: number = 0;
+    private globalTranslateVec: vec3 = vec3.fromValues(0, 0, 0);
     private translateVec: vec3 = vec3.fromValues(0, 0, 0);
     private dirty = false;
     
@@ -129,10 +131,14 @@ export class Tile {
         this.dirty = true;
     }
 
+    public globalTranslate(t: vec2): void {
+        this.globalTranslateVec = vec3.fromValues(t[0], t[1], 0);
+        this.updateModelMatrix()
+    }
+
     public translate(t: vec2): void {
         this.translateVec = vec3.fromValues(t[0], t[1], 0);
         this.updateModelMatrix()
-        this.dirty = true;
     }
 
     public scale(s: number): void {
@@ -144,6 +150,12 @@ export class Tile {
         this.updateModelMatrix();
     }
 
+
+    public globalRotate(degrees: number): void {
+        this.globalRotateRad = degrees * (Math.PI / 180.0);
+        this.updateModelMatrix();
+    }
+
     public rotate(degrees: number): void {
         this.rotateRad = degrees * (Math.PI / 180.0)
         this.updateModelMatrix();
@@ -151,6 +163,8 @@ export class Tile {
 
     private updateModelMatrix(): void {
         this.properties.modelMatrix = mat4.create();
+        mat4.translate(this.properties.modelMatrix, this.properties.modelMatrix, this.globalTranslateVec);
+        mat4.rotateZ(this.properties.modelMatrix, this.properties.modelMatrix, this.globalRotateRad);  
         mat4.translate(this.properties.modelMatrix, this.properties.modelMatrix, this.translateVec);
         mat4.rotateZ(this.properties.modelMatrix, this.properties.modelMatrix, this.rotateRad);  
         mat4.scale(this.properties.modelMatrix, this.properties.modelMatrix, vec3.fromValues(this.scaleNum, this.scaleNum, this.scaleNum));

@@ -1,4 +1,4 @@
-export const tileShader: string = /* wgsl */ `
+export const tileShader: string = /* wgsl */`
 
 struct Camera {
     projection: mat4x4<f32>,
@@ -65,22 +65,27 @@ fn main_fragment(@builtin(position) Position : vec4<f32>, @location(0) textureCo
     var c_to: vec3<f32> = vec3<f32>(0, 0, 0);
     var t: f32 = 0.0;
 
-    let mval = min(0.1, value);
-    if (mval > 0.01) {
+    let nval: f32 = min(value / (tile.max_value * 0.8), 1.0);
+
+    const a: f32 = 1000.0;
+    let logval: f32 = max(log(nval * a + 1.0) / log(a + 1.0), 0.0);
+
+    if (logval > 0.6) {
         c_from = vec3<f32>(0.0, 0.0, 0.0);
         c_to = vec3<f32>(169.0 / 255.0, 3.0 / 255.0, 22.0 / 255.0);
-        t = (mval - 0.01) / (0.1 - 0.01);
+        t = (logval - 0.6) / (1.0 - 0.6);
     } else {
-        if (mval > 0.001) {
+        if (logval > 0.3) {
             c_from = vec3<f32>(169.0 / 255.0, 3.0 / 255.0, 22.0 / 255.0);
             c_to = vec3<f32>(245.0 / 255.0, 176.0 / 255.0, 54.0 / 255.0);
-            t = (mval - 0.001) / (0.01 - 0.001);
+            t = (logval - 0.3) / (0.6 - 0.3);
         } else {
             c_from = vec3<f32>(245.0 / 255.0, 176.0 / 255.0, 54.0 / 255.0);
             c_to = vec3<f32>(1.0, 1.0, 1.0);
-            t = mval;
+            t = logval / 0.3;
         }
     }
+
     return FragmentOutput(
         vec4<f32>(mix(c_from, c_to, 1 - t), 1.0)
     );
