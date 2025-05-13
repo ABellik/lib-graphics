@@ -6,7 +6,7 @@ export interface TileProperties {
     modelMatrix: mat4,
     modelMatrixInverse: mat4,
     color: vec4,
-    props: vec4
+    props: vec4 // props[0] == mirror, props[1] == flip, props[2] === maxValue 
 }
 
 // Because it is padded to 16 bytes -> 144 + 16 props 
@@ -55,6 +55,7 @@ export class Tile {
     private globalRotateRad: number = 0;
     private globalTranslateVec: vec3 = vec3.fromValues(0, 0, 0);
     private translateVec: vec3 = vec3.fromValues(0, 0, 0);
+    private triangular = false;
     private dirty = false;
     
     private bindGroup!: GPUBindGroup;
@@ -112,6 +113,10 @@ export class Tile {
     public maxValue(max: number) {
         this.properties.props[2] = max;
         this.dirty = true;
+    }
+
+    public setTriangular(triangular: boolean) {
+        this.triangular = triangular;
     }
 
     // Flip tile around y = -x axis
@@ -211,6 +216,6 @@ export class Tile {
 
         // Set bind group
         encoder.setBindGroup(1, this.bindGroup);
-        encoder.draw(4, 1, 0, 0);
+        encoder.draw((this.triangular) ? 3 : 4, 1, 0, 0);
     }
 }
