@@ -17,6 +17,7 @@ export class OrbitCamera extends Camera {
     private lastX = 0;
     private lastY = 0;
     private mousePressed = false;
+    private mouseButton = -1;
     private distance = 4;
 
     constructor(device: GPUDevice, width: number, height: number, near = 0.01, fieldOfView = 45.0) {
@@ -65,6 +66,7 @@ export class OrbitCamera extends Camera {
         this.lastX = event.offsetX;
         this.lastY = event.offsetY;
         this.mousePressed = true;
+        this.mouseButton = event.button;
 
         this.updateCPU();
     }
@@ -72,12 +74,18 @@ export class OrbitCamera extends Camera {
     public onMouseMove(event: MouseEvent): void {
         super.onMouseMove(event);
 
-        if (this.mousePressed) {
+        if (this.mousePressed && this.mouseButton === 2) {
             const changeX = this.lastX - event.offsetX;
             const changeY = this.lastY - event.offsetY;
 
-            this.worldTransform.rotateDegX(-changeX / 5.0);
-            this.worldTransform.rotateDegY(changeY / 5.0);
+            if (event.shiftKey) { // Shift + Right Click = Rotation
+                this.worldTransform.rotateDegX(-changeX / 5.0);
+                this.worldTransform.rotateDegY(changeY / 5.0);
+            } else { // Right Click = Translation (Pan)
+                const panSpeed = this.distance * 0.001;
+                this.worldTransform.translateX(changeX * panSpeed);
+                this.worldTransform.translateY(changeY * panSpeed);
+            }
 
             this.lastX = event.offsetX;
             this.lastY = event.offsetY;

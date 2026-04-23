@@ -1,7 +1,8 @@
 import { mat4, quat, vec3 } from "gl-matrix";
 import { toRadian } from "./shared";
 
-export class WorldTransformation extends EventTarget {    
+export class WorldTransformation extends EventTarget {
+    private _translation = vec3.fromValues(0, 0, 0);
     private _rotation = quat.identity(quat.create());
     private _scale = 1.0;
 
@@ -40,6 +41,21 @@ export class WorldTransformation extends EventTarget {
         this.changed();
     }
 
+    public translateX(dist: number): void {
+        this._translation[0] += dist;
+        this.changed();
+    }
+
+    public translateY(dist: number): void {
+        this._translation[1] += dist;
+        this.changed();
+    }
+
+    public translateZ(dist: number): void {
+        this._translation[2] += dist;
+        this.changed();
+    }
+
     private changed(): void{
         this._isDirty = true;
         this.dispatchEvent(new Event("changed"));
@@ -48,7 +64,10 @@ export class WorldTransformation extends EventTarget {
     private updateDirty(): void{
         if(this._isDirty){
             const rotate = mat4.fromQuat(mat4.create(), this._rotation);
-            mat4.scale(this._matrix, rotate, vec3.fromValues(this.scale, this.scale, this.scale));
+            const translate = mat4.fromTranslation(mat4.create(), this._translation);
+            
+            const combined = mat4.multiply(mat4.create(), translate, rotate);
+            mat4.scale(this._matrix, combined, vec3.fromValues(this.scale, this.scale, this.scale));
             
             mat4.invert(this._matrixInv, this._matrix);
         }

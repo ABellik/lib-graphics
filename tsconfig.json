@@ -11,6 +11,7 @@
       "DOM"
     ],
     "moduleResolution": "Node",
+    "ignoreDeprecations": "6.0",
     "strict": true,
     "resolveJsonModule": true,
     "isolatedModules": true,

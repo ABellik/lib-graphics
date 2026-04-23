@@ -1,0 +1,21 @@
+// vite.config.js
+import { resolve } from "path";
+import { defineConfig } from "file:///C:/Users/Adam/Projets/VisitLabProject/gitlab/lib-graphics/node_modules/vite/dist/node/index.js";
+import dts from "file:///C:/Users/Adam/Projets/VisitLabProject/gitlab/lib-graphics/node_modules/vite-plugin-dts/dist/index.mjs";
+import tsconfigPaths from "file:///C:/Users/Adam/Projets/VisitLabProject/gitlab/lib-graphics/node_modules/vite-tsconfig-paths/dist/index.mjs";
+var __vite_injected_original_dirname = "C:\\Users\\Adam\\Projets\\VisitLabProject\\gitlab\\lib-graphics";
+var vite_config_default = defineConfig({
+  build: {
+    sourcemap: true,
+    lib: {
+      entry: resolve(__vite_injected_original_dirname, "src/index.ts"),
+      name: "lib-graphics",
+      fileName: (format) => `lib-graphics.${format}.js`
+    }
+  },
+  plugins: [tsconfigPaths(), dts()]
+});
+export {
+  vite_config_default as default
+};
+//# sourceMappingURL=data:application/json;base64,ewogICJ2ZXJzaW9uIjogMywKICAic291cmNlcyI6IFsidml0ZS5jb25maWcuanMiXSwKICAic291cmNlc0NvbnRlbnQiOiBbImNvbnN0IF9fdml0ZV9pbmplY3RlZF9vcmlnaW5hbF9kaXJuYW1lID0gXCJDOlxcXFxVc2Vyc1xcXFxBZGFtXFxcXFByb2pldHNcXFxcVmlzaXRMYWJQcm9qZWN0XFxcXGdpdGxhYlxcXFxsaWItZ3JhcGhpY3NcIjtjb25zdCBfX3ZpdGVfaW5qZWN0ZWRfb3JpZ2luYWxfZmlsZW5hbWUgPSBcIkM6XFxcXFVzZXJzXFxcXEFkYW1cXFxcUHJvamV0c1xcXFxWaXNpdExhYlByb2plY3RcXFxcZ2l0bGFiXFxcXGxpYi1ncmFwaGljc1xcXFx2aXRlLmNvbmZpZy5qc1wiO2NvbnN0IF9fdml0ZV9pbmplY3RlZF9vcmlnaW5hbF9pbXBvcnRfbWV0YV91cmwgPSBcImZpbGU6Ly8vQzovVXNlcnMvQWRhbS9Qcm9qZXRzL1Zpc2l0TGFiUHJvamVjdC9naXRsYWIvbGliLWdyYXBoaWNzL3ZpdGUuY29uZmlnLmpzXCI7aW1wb3J0IHsgcmVzb2x2ZSB9IGZyb20gJ3BhdGgnXHJcbmltcG9ydCB7IGRlZmluZUNvbmZpZyB9IGZyb20gJ3ZpdGUnXHJcblxyXG5pbXBvcnQgZHRzIGZyb20gJ3ZpdGUtcGx1Z2luLWR0cydcclxuaW1wb3J0IHRzY29uZmlnUGF0aHMgZnJvbSAndml0ZS10c2NvbmZpZy1wYXRocydcclxuXHJcbmV4cG9ydCBkZWZhdWx0IGRlZmluZUNvbmZpZyh7XHJcbiAgYnVpbGQ6IHtcclxuICAgIHNvdXJjZW1hcDogdHJ1ZSxcclxuICAgIGxpYjoge1xyXG4gICAgICAvLyBDb3VsZCBhbHNvIGJlIGEgZGljdGlvbmFyeSBvciBhcnJheSBvZiBtdWx0aXBsZSBlbnRyeSBwb2ludHNcclxuICAgICAgZW50cnk6IHJlc29sdmUoX19kaXJuYW1lLCAnc3JjL2luZGV4LnRzJyksXHJcbiAgICAgIG5hbWU6ICdsaWItZ3JhcGhpY3MnLFxyXG4gICAgICAvLyB0aGUgcHJvcGVyIGV4dGVuc2lvbnMgd2lsbCBiZSBhZGRlZFxyXG4gICAgICBmaWxlTmFtZTogKGZvcm1hdCkgPT4gYGxpYi1ncmFwaGljcy4ke2Zvcm1hdH0uanNgXHJcbiAgICB9LFxyXG4gIH0sXHJcbiAgcGx1Z2luczogW3RzY29uZmlnUGF0aHMoKSwgZHRzKCldXHJcbn0pIl0sCiAgIm1hcHBpbmdzIjogIjtBQUEyVyxTQUFTLGVBQWU7QUFDblksU0FBUyxvQkFBb0I7QUFFN0IsT0FBTyxTQUFTO0FBQ2hCLE9BQU8sbUJBQW1CO0FBSjFCLElBQU0sbUNBQW1DO0FBTXpDLElBQU8sc0JBQVEsYUFBYTtBQUFBLEVBQzFCLE9BQU87QUFBQSxJQUNMLFdBQVc7QUFBQSxJQUNYLEtBQUs7QUFBQSxNQUVILE9BQU8sUUFBUSxrQ0FBVyxjQUFjO0FBQUEsTUFDeEMsTUFBTTtBQUFBLE1BRU4sVUFBVSxDQUFDLFdBQVcsZ0JBQWdCO0FBQUEsSUFDeEM7QUFBQSxFQUNGO0FBQUEsRUFDQSxTQUFTLENBQUMsY0FBYyxHQUFHLElBQUksQ0FBQztBQUNsQyxDQUFDOyIsCiAgIm5hbWVzIjogW10KfQo=
