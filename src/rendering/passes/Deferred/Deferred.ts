@@ -466,75 +466,79 @@ export class DeferredPass extends Pass {
         }
 
         renderPass.end();
-
-        const transparrentRenderPass = encoder.beginRenderPass({
-            colorAttachments: [
-                {
-                    view: this._colorTexture.createView(),
-                    clearValue: this.clearColor,
-                    loadOp: "load",
-                    storeOp: "store",
-                },
-            ]
-        });
-
-        transparrentRenderPass.setBindGroup(0, cameraBindGroup);
         
         const transparentObjects = scene.objects.filter(object => object instanceof ConcreteObject && object.transparent) as IObject[];
-        for (const object of transparentObjects) {
-            if (object instanceof IParametricObject) {
-                const pipeline = this._pipelines.renderPipelines.get(`TransparentDeferredPass-${object.getTypeName()}`);
+        if (transparentObjects.length > 0) {
+            const transparrentRenderPass = encoder.beginRenderPass({
+                colorAttachments: [
+                    {
+                        view: this._colorTexture.createView(),
+                        clearValue: this.clearColor,
+                        loadOp: "load",
+                        storeOp: "store",
+                    },
+                ]
+            });
 
-                if (!pipeline) {
-                    continue;
+            transparrentRenderPass.setBindGroup(0, cameraBindGroup);
+            
+            for (const object of transparentObjects) {
+                if (object instanceof IParametricObject) {
+                    const pipeline = this._pipelines.renderPipelines.get(`TransparentDeferredPass-${object.getTypeName()}`);
+
+                    if (!pipeline) {
+                        continue;
+                    }
+
+                    transparrentRenderPass.setPipeline(pipeline);
+                    object.record(transparrentRenderPass, 1, frameID);
                 }
-
-                transparrentRenderPass.setPipeline(pipeline);
-                object.record(transparrentRenderPass, 1, frameID);
             }
-        }
 
-        transparrentRenderPass.end();
+            transparrentRenderPass.end();
+        }
 
         // Volumetric Render Pass
-        const volumeRenderPass = encoder.beginRenderPass({
-            colorAttachments: [
-                {
-                    view: this._volumeTexture.createView(),
-                    loadOp: "clear",
-                    storeOp: "store",
-                }
-            ]
-        });
-
-        if (!this.depthTexture || !Volume.bindGroupLayouts[1]) {
-            return;
-        }
-        
-        const depthTextureBindGroup = this._graphicsLibrary.device.createBindGroup({
-            layout: Volume.bindGroupLayouts[1],
-            entries: [{
-                binding: 0,
-                resource: this.depthTexture.createView(),
-            }]
-        });
-        
-        volumeRenderPass.setBindGroup(0, cameraBindGroup);
-        volumeRenderPass.setBindGroup(2, depthTextureBindGroup);
-
         const volumeObjects: IParametricObject[] = scene.objects.filter(object => (object instanceof Volume || object instanceof DynamicVolume)) as IParametricObject[];
-        for (const object of volumeObjects) {
-            const volumePipeline = this._pipelines.renderPipelines.get(`DeferredPass-${object.getTypeName()}`);
-            
-            if (volumePipeline) {
-                volumeRenderPass.setPipeline(volumePipeline);
-                object.record(volumeRenderPass, 1, frameID);
-            } else {
-                console.log("Cannot find pipeline");
-            }
-        }
+        if (volumeObjects.length > 0) {
+            const volumeRenderPass = encoder.beginRenderPass({
+                colorAttachments: [
+                    {
+                        view: this._volumeTexture.createView(),
+                        loadOp: "clear",
+                        storeOp: "store",
+                    }
+                ]
+            });
 
-        volumeRenderPass.end();
+            if (!this.depthTexture || !Volume.bindGroupLayouts[1]) {
+                return;
+            }
+            
+            const depthTextureBindGroup = this._graphicsLibrary.device.createBindGroup({
+                layout: Volume.bindGroupLayouts[1],
+                entries: [{
+                    binding: 0,
+                    resource: this.depthTexture.createView(),
+                }]
+            });
+            
+            volumeRenderPass.setBindGroup(0, cameraBindGroup);
+            volumeRenderPass.setBindGroup(2, depthTextureBindGroup);
+
+            for (const object of volumeObjects) {
+                const volumePipeline = this._pipelines.renderPipelines.get(`DeferredPass-${object.getTypeName()}`);
+                
+                if (volumePipeline) {
+                    volumeRenderPass.setPipeline(volumePipeline);
+                    object.record(volumeRenderPass, 1, frameID);
+                } else {
+                    console.log("Cannot find pipeline");
+                }
+            }
+
+            volumeRenderPass.end();
+        }
     }
 
     public get colorTexture(): GPUTexture | null {
