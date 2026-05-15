@@ -178,12 +178,66 @@ export class RoundedConeInstanced extends IParametricObject {
         }
     }
 
-    static gpuCodeGetBoundingRectangleVertex = `
-        let center: vec3<f32> = 0.5 * (${this.variableName}.start.xyz + ${this.variableName}.end.xyz);
-        let diameter = length(${this.variableName}.start.xyz - ${this.variableName}.end.xyz);
-        let radius: f32 = 0.5 * diameter + max(${this.variableName}.start_radius, ${this.variableName}.end_radius);
+static gpuCodeGetBoundingRectangleVertex = /* wgsl */`
+    let T: mat4x4<f32> = mat4x4<f32>(
+        vec4<f32>(${this.variableName}.start_radius, 0.0, 0.0, 0.0),
+        vec4<f32>(0.0, ${this.variableName}.start_radius, 0.0, 0.0),
+        vec4<f32>(0.0, 0.0, ${this.variableName}.start_radius, 0.0),
+        vec4<f32>(${this.variableName}.start.x, ${this.variableName}.start.y, ${this.variableName}.start.z, 1.0)
+    );
 
-        let boundingRectangleVertex = sphereToBoundingRectangleVertex(center, radius, vertexIndex);
+    let R: mat4x4<f32> = transpose(camera.projectionView * T);
+
+    let roots_horizontal_s: vec2<f32> = quadraticRoots(dot(R[3], D * R[3]), -2.0 * dot(R[0], D * R[3]), dot(R[0], D * R[0]));
+    let half_width_s: f32 = abs(roots_horizontal_s.x - roots_horizontal_s.y) * 0.5;
+
+    let roots_vertical_s: vec2<f32> = quadraticRoots(dot(R[3], D * R[3]), -2.0 * dot(R[1], D * R[3]), dot(R[1], D * R[1]));
+    let half_height_s: f32 = abs(roots_vertical_s.x - roots_vertical_s.y) * 0.5;
+
+    var center_s: vec4<f32> = vec4<f32>(dot(R[0], D * R[3]), dot(R[1], D * R[3]), 0.0, dot(R[3], D * R[3]));
+    center_s.x = center_s.x / center_s.w;
+    center_s.y = center_s.y / center_s.w;
+
+
+    let T2: mat4x4<f32> = mat4x4<f32>(
+        vec4<f32>(${this.variableName}.end_radius, 0.0, 0.0, 0.0),
+        vec4<f32>(0.0, ${this.variableName}.end_radius, 0.0, 0.0),
+        vec4<f32>(0.0, 0.0, ${this.variableName}.end_radius, 0.0),
+        vec4<f32>(${this.variableName}.end.x, ${this.variableName}.end.y, ${this.variableName}.end.z, 1.0)
+    );
+
+    let R2: mat4x4<f32> = transpose(camera.projectionView * T2);
+
+    let roots_horizontal_e: vec2<f32> = quadraticRoots(dot(R2[3], D * R2[3]), -2.0 * dot(R2[0], D * R2[3]), dot(R2[0], D * R2[0]));
+    let half_width_e: f32 = abs(roots_horizontal_e.x - roots_horizontal_e.y) * 0.5;
+
+    let roots_vertical_e: vec2<f32> = quadraticRoots(dot(R2[3], D * R2[3]), -2.0 * dot(R2[1], D * R2[3]), dot(R2[1], D * R2[1]));
+    let half_height_e: f32 = abs(roots_vertical_e.x - roots_vertical_e.y) * 0.5;
+
+    var center_e: vec4<f32> = vec4<f32>(dot(R2[0], D * R2[3]), dot(R2[1], D * R2[3]), 0.0, dot(R2[3], D * R2[3]));
+    center_e.x = center_e.x / center_e.w;
+    center_e.y = center_e.y / center_e.w;
+
+
+    var boundingRectangleVertex: vec2<f32> = vec2<f32>(0.0, 0.0);
+    switch(vertexIndex) {
+        case 0: {
+        // Left-top
+        boundingRectangleVertex = vec2<f32>(min(center_s.x - half_width_s, center_e.x - half_width_e), max(center_s.y + half_height_s, center_e.y + half_height_e));
+        }
+        case 1: {
+        // Right-top
+        boundingRectangleVertex = vec2<f32>(max(center_s.x + half_width_s, center_e.x + half_width_e), max(center_s.y + half_height_s, center_e.y + half_height_e));
+        }
+        case 2: {
+        // Left-bot
+        boundingRectangleVertex = vec2<f32>(min(center_s.x - half_width_s, center_e.x - half_width_e), min(center_s.y - half_height_s, center_e.y - half_height_e));
+        }
+        default: { // 3
+        // Right-bot
+        boundingRectangleVertex = vec2<f32>(max(center_s.x + half_width_s, center_e.x + half_width_e), min(center_s.y - half_height_s, center_e.y - half_height_e));
+        }
+    }
     `;
     //#endregion GPU Code
 

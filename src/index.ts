@@ -92,8 +92,8 @@ export class GraphicsLibrary {
         });
     }
 
-    public create3DViewport(scene: Scene | null = null, camera: Camera3D | null = null): Viewport3D {
-        return new Viewport3D(this, scene, camera);
+    public create3DViewport(scene: Scene | null = null, camera: Camera3D | null = null, ssaoEnabled: boolean = true): Viewport3D {
+        return new Viewport3D(this, scene, camera, ssaoEnabled);
     }
 
     public create2DViewport(): DistanceViewport {

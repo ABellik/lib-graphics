@@ -177,7 +177,9 @@ export class Viewport3D extends Viewport {
             this.ssaoPass.setDirty();
         }
 
-        this.ssaoPass.beforeRender();
+        if (this.ssaoEnabled) {
+            this.ssaoPass.beforeRender();
+        }
         //#endregion Before Render
 
         //#region Merge Pipeline
